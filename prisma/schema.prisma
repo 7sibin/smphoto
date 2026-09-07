@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Event {
+  id       String    @id @default(uuid())
+  name     String
+  date     DateTime
+  location String
+  sessions Session[]
+
+  @@index([date])
+  @@map("events")
+}
+
+model Session {
+  id      String @id @default(uuid())
+  eventId String @map("event_id")
+  label   String
+
+  startsAt DateTime @map("starts_at")
+  endsAt   DateTime @map("ends_at")
+
+  /// Cena celog paketa u minor jedinicama (feninga). 6000 = 60 KM.
+  price    Int
+  currency String @default("BAM")
+
+  /// Kodovi se nikad ne cuvaju kao plaintext. HMAC-SHA256 sa serverskim
+  /// kljucem je deterministican, pa se indeksira i pretrazuje direktno.
+  accessCodeHmac String  @unique @map("access_code_hmac")
+  unlockCodeHmac String? @unique @map("unlock_code_hmac")
+
+  unlockedAt DateTime? @map("unlocked_at")
+  unlockedBy String?   @map("unlocked_by")
+
+  coverPhotoId String? @map("cover_photo_id")
+
+  /// Nije u pocetnom modelu, ali /api/access mora da vrati 410 sa
+  /// reason "expired" | "archived" — bez ova dva polja to stanje ne postoji.
+  expiresAt  DateTime? @map("expires_at")
+  archivedAt DateTime? @map("archived_at")
+
+  event  Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  photos Photo[]
+  orders Order[]
+
+  @@index([eventId, startsAt])
+  @@map("sessions")
+}
+
+model Photo {
+  id        String @id @default(uuid())
+  sessionId String @map("session_id")
+
+  /// Putanja ka originalu u storage-u. Nikad se ne salje klijentu.
+  storageKey String @map("storage_key")
+
+  takenAt DateTime @map("taken_at")
+  width   Int
+  height  Int
+  bytes   Int
+
+  /// Da li su derivati vec peceni u storage. Mock slike se crtaju u letu; prave
+  /// se peku pri ingestu, pa ruta samo cita bajtove sa diska.
+  hasDerivatives Boolean @default(false) @map("has_derivatives")
+
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId, takenAt])
+  @@map("photos")
+}
+
+model Order {
+  id        String @id @default(uuid())
+  sessionId String @map("session_id")
+
+  /// Iznos u minor jedinicama, u trenutku naplate.
+  amount     Int
+  currency   String   @default("BAM")
+  method     String   @default("cash")
+  operatorId String   @map("operator_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@map("orders")
+}
+
+model CodeAttempt {
+  id String @id @default(uuid())
+
+  /// IP adresa podnosioca. Kljuc za rate limit prozor.
+  ip String
+
+  /// "access" | "unlock" | "unknown" — koji tip koda je pogodjen, ako ijedan.
+  kind String
+
+  success   Boolean
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([ip, createdAt])
+  @@map("code_attempts")
+}

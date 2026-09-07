@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;600;800&amp;family=Archivo:wght@300;400;500&amp;display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; background: #f5f3ee; }
+  * { box-sizing: border-box; }
+  a { color: #12110f; text-decoration: none; }
+  a:hover { color: #6b675e; }
+  @keyframes v2Rise { from { transform: translateY(102%); } to { transform: translateY(0); } }
+  @keyframes v2Fade { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes v2Rule { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes v2Nudge { 0%,100% { transform: translateX(0); opacity: .5; } 50% { transform: translateX(8px); opacity: 1; } }
+  @keyframes v2Reveal { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes v2Sway1 { 0%,100% { transform: rotate(-2.4deg); } 50% { transform: rotate(-0.6deg); } }
+  @keyframes v2Sway2 { 0%,100% { transform: rotate(1.9deg); } 50% { transform: rotate(0.2deg); } }
+  @keyframes v2Sway3 { 0%,100% { transform: rotate(-1.3deg); } 50% { transform: rotate(0.9deg); } }
+  @keyframes v2Sway4 { 0%,100% { transform: rotate(2.6deg); } 50% { transform: rotate(0.7deg); } }
+  @keyframes v2Drop { from { opacity: 0; transform: translateY(-40px) rotate(-7deg); } to { opacity: 1; transform: translateY(0) rotate(0deg); } }
+  @keyframes v2Float { 0%, 100% { transform: translateY(0) rotate(-0.6deg); } 50% { transform: translateY(-16px) rotate(0.6deg); } }
+  @keyframes loadFocus { 0% { opacity: 0; filter: blur(18px); letter-spacing: 0.5em; } 55% { opacity: 1; filter: blur(0); letter-spacing: 0.16em; } 100% { opacity: 1; filter: blur(0); letter-spacing: 0.16em; } }
+  @keyframes loadBar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes loadOut { to { opacity: 0; } }
+  @keyframes loadUp { to { transform: translateY(-101%); } }
+  @keyframes loadDown { to { transform: translateY(101%); } }
+  @keyframes loadHide { to { visibility: hidden; } }
+  @keyframes v2FadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes v2Glint { 0%, 100% { opacity: .28; } 50% { opacity: .62; } }
+  [data-track]::-webkit-scrollbar { height: 2px; }
+  [data-track]::-webkit-scrollbar-thumb { background: rgba(18,17,15,0.35); }
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #f5f3ee; color: #12110f; font-family: Archivo, Helvetica, sans-serif; display: flex; flex-direction: column;">
+  <div data-loader="" style="position: fixed; inset: 0; z-index: 60; pointer-events: none; animation: loadHide 0s linear 2.05s forwards;">
+    <div style="position: absolute; left: 0; right: 0; top: 0; height: 50.2%; background: #12110f; animation: loadUp .72s cubic-bezier(.76,0,.24,1) 1.32s both;"></div>
+    <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 50.2%; background: #12110f; animation: loadDown .72s cubic-bezier(.76,0,.24,1) 1.32s both;"></div>
+    <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; animation: loadOut .26s ease 1.14s both;">
+      <span style="display: flex; align-items: center; justify-content: center; width: 132px; height: 132px; border: 1px solid rgba(245,243,238,0.8); border-radius: 50%; color: #f5f3ee; font-family: 'Big Shoulders Display', sans-serif; font-weight: 600; font-size: 26px; text-transform: uppercase; animation: loadFocus 1.15s cubic-bezier(.16,1,.3,1) both;"><span style="margin-left: 0.16em;">SM</span></span>
+      <span style="display: block; width: 132px; height: 2px; background: #c1272d; transform-origin: left; animation: loadBar 1.15s cubic-bezier(.4,0,.2,1) both;"></span>
+      <span style="font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: #f5f3ee; animation: loadOut .4s ease reverse both;">1/500 · f/1.4 · iso 200</span>
+    </div>
+  </div>
+
+
+  <section style="position: relative; min-height: 100vh; overflow: hidden; background: #12110f;">
+    <img src="uploads/1.webp" alt="Rafting čamac na brzaku" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;">
+    <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(18,17,15,0.66) 0, rgba(18,17,15,0.34) 26%, rgba(18,17,15,0.66) 58%, rgba(18,17,15,0.93) 100%);"></div>
+
+    <div style="position: relative; min-height: 100vh; display: flex; flex-direction: column;">
+      <header style="position: fixed; top: 0; left: 0; right: 0; z-index: 40; display: flex; align-items: center; justify-content: space-between; gap: 32px; padding: 20px 46px; background: rgba(18,17,15,0.82); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(245,243,238,0.14); animation: v2Fade .9s ease .08s both;">
+        <a href="#" style="display: flex; align-items: center; justify-content: center; width: 62px; height: 62px; border: 1px solid rgba(245,243,238,0.75); border-radius: 50%; color: #f5f3ee; font-family: 'Big Shoulders Display', sans-serif; font-weight: 600; font-size: 19px; letter-spacing: 0.16em; text-transform: uppercase;" style-hover="color: #f5f3ee; border-color: #c1272d;"><span style="margin-left: 0.16em;">SM</span></a>
+        <nav style="display: flex; align-items: center; gap: 30px; font-size: 11px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase;">
+          <a href="#" style="color: #f5f3ee; padding-bottom: 3px; border-bottom: 1px solid #c1272d;" style-hover="color: #f5f3ee;">Home</a>
+          <a href="#rafting" style="color: #f5f3ee;" style-hover="color: #f5f3ee;">Rafting</a>
+          <a href="Galerija%20kategorije.dc.html#vencanja" style="color: #f5f3ee;" style-hover="color: #f5f3ee;">Venčanja</a>
+          <a href="Galerija%20kategorije.dc.html#krstenja" style="color: #f5f3ee;" style-hover="color: #f5f3ee;">Krštenja</a>
+          <a href="Galerija%20kategorije.dc.html#rodjendani" style="color: #f5f3ee;" style-hover="color: #f5f3ee;">Rođendani</a>
+          <a href="O%20nama.dc.html" style="color: #f5f3ee;" style-hover="color: #f5f3ee;">O nama</a>
+        </nav>
+      </header>
+
+      <div style="flex: 1;"></div>
+
+      <div style="padding: 96px 46px 7vh; display: grid; gap: 24px; background: linear-gradient(180deg, rgba(18,17,15,0) 0, rgba(18,17,15,0.88) 34%, rgba(18,17,15,0.94) 100%);"><div style="display: grid; gap: 24px; max-width: 760px;">
+        <div style="display: flex; align-items: center; gap: 14px; font-family: ui-monospace, monospace; font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #f5f3ee; animation: v2Fade .9s ease .2s both;">
+          <span style="display: flex; align-items: center; gap: 8px;"><span style="display: block; width: 7px; height: 7px; border-radius: 50%; background: #c1272d;"></span>Danas objavljeno</span>
+          <span style="display: block; width: 34px; height: 1px; background: rgba(245,243,238,0.5);"></span>
+          <span>Tara, brzak Pesak</span>
+        </div>
+
+        <h1 style="margin: 0; font-family: 'Big Shoulders Display', sans-serif; font-weight: 800; text-transform: uppercase; font-size: clamp(40px, 5.6vw, 92px); line-height: 0.86; letter-spacing: -0.01em; color: #f5f3ee;">
+          <span style="display: block; overflow: hidden; padding: 0.2em 0 0.3em; margin: -0.2em 0 -0.3em;"><span style="display: block; animation: v2Rise 1s cubic-bezier(.16,1,.3,1) .12s both;">Vaš čamac je</span></span>
+          <span style="display: block; overflow: hidden; padding: 0.2em 0 0.3em; margin: -0.2em 0 -0.3em;"><span style="display: block; animation: v2Rise 1s cubic-bezier(.16,1,.3,1) .24s both;">već u galeriji</span></span>
+        </h1>
+
+        <form data-code-form="" onSubmit="{{ onCode }}" style="display: grid; gap: 14px; max-width: 560px; animation: v2Fade 1s ease .5s both;">
+          <span style="font-size: 10.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #f5f3ee;">Ukucaj kod svoje grupe</span>
+          <div style="display: flex; align-items: stretch; gap: 0; border-bottom: 1px solid rgba(245,243,238,0.55);">
+            <input name="camac" type="text" placeholder="ФО-124" autoComplete="off" style="flex: 1; min-width: 0; padding: 10px 0; border: 0; background: transparent; font-family: ui-monospace, monospace; font-size: 26px; letter-spacing: 0.14em; text-transform: uppercase; color: #f5f3ee; outline: none;" style-focus="border-color: #c1272d;">
+            <button type="submit" style="flex: none; align-self: center; margin-left: 18px; padding: 13px 26px; background: #c1272d; color: #f5f3ee; border: 1px solid #c1272d; border-radius: 999px; font-family: Archivo, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer;" style-hover="background: #f5f3ee; color: #12110f; border-color: #f5f3ee;">Otvori galeriju</button>
+          </div>
+          <span data-code-note="" style="font-family: ui-monospace, monospace; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: #f5f3ee;">Kod grupe dobijaš od vodiča posle spusta — galerija stoji online do kraja sezone</span>
+        </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="rafting" style="padding: 96px 0 88px; background: #f5f3ee;">
+    <div data-reveal="" style="opacity: 0; padding: 0 40px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); gap: 46px; align-items: end;">
+      <div>
+        <div style="display: flex; align-items: baseline; gap: 14px; font-size: 11px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: #6b675e;">
+          <span>01</span>
+          <span style="display: block; width: 40px; height: 1px; background: rgba(18,17,15,0.4);"></span>
+          <span>Sezona april — oktobar</span>
+        </div>
+        <h2 style="margin: 18px 0 0; font-family: 'Big Shoulders Display', sans-serif; font-weight: 800; text-transform: uppercase; font-size: clamp(40px, 5.4vw, 82px); line-height: 0.88; letter-spacing: -0.01em;">Fotografije<br>sa raftinga</h2>
+      </div>
+      <div style="display: grid; gap: 20px;">
+        <p style="margin: 0; max-width: 44ch; font-size: 15px; line-height: 1.65; color: #3a3833; text-wrap: pretty;">
+          Stojimo na brzacima kroz koje prolazite — Pesak, Ušće, Bijeli kamen. Snimamo svaki čamac u prolazu, bez zaustavljanja spusta, i galeriju vezujemo za broj vašeg čamca.
+        </p>
+        <div style="display: flex; align-items: center; gap: 12px; font-size: 10.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(18,17,15,0.55);">
+          <span>Četiri kadra, okačena da se suše</span>
+          <span style="display: block; width: 26px; height: 1px; background: #12110f;"></span>
+          <span>04 / 640</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 74px; padding: 0 40px; position: relative;">
+      <div style="position: absolute; left: 0; right: 0; top: 8px; height: 1px; background: linear-gradient(90deg, rgba(18,17,15,0) 0, rgba(18,17,15,0.45) 6%, rgba(18,17,15,0.45) 94%, rgba(18,17,15,0) 100%);"></div>
+      <div data-line="" style="display: flex; align-items: flex-start; gap: clamp(12px, 2.4vw, 30px); flex-wrap: nowrap;">
+      <figure data-reveal="" data-hang="0" style="opacity: 0; position: relative; margin: 0; flex: 1 1 0; min-width: 0; margin-top: 0px; transform-origin: top center; padding: 14px 14px 40px; background: #fbfaf6; box-shadow: 0 18px 34px -22px rgba(18,17,15,0.5), 0 1px 0 rgba(18,17,15,0.06);">
+        <span style="position: absolute; top: -19px; left: 50%; margin-left: -7px; width: 14px; height: 32px; background: #c1272d; box-shadow: 0 2px 4px rgba(18,17,15,0.35);"></span>
+        <span style="position: absolute; top: -13px; left: 50%; margin-left: -9px; width: 18px; height: 3px; background: rgba(18,17,15,0.35);"></span>
+        <img src="uploads/1.webp" alt="Rafting čamac na brzaku" style="display: block; width: 100%; height: 360px; object-fit: cover;">
+        <figcaption style="position: absolute; left: 14px; right: 14px; bottom: 13px; display: flex; justify-content: space-between; gap: 10px; font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6b675e;"><span>01 — brzak Pesak</span><span>Tara</span></figcaption>
+      </figure>
+      <figure data-reveal="" data-hang="1" style="opacity: 0; position: relative; margin: 0; flex: 1 1 0; min-width: 0; margin-top: 14px; transform-origin: top center; padding: 14px 14px 40px; background: #fbfaf6; box-shadow: 0 18px 34px -22px rgba(18,17,15,0.5), 0 1px 0 rgba(18,17,15,0.06);">
+        <span style="position: absolute; top: -19px; left: 50%; margin-left: -7px; width: 14px; height: 32px; background: #c1272d; box-shadow: 0 2px 4px rgba(18,17,15,0.35);"></span>
+        <span style="position: absolute; top: -13px; left: 50%; margin-left: -9px; width: 18px; height: 3px; background: rgba(18,17,15,0.35);"></span>
+        <img src="uploads/2.webp" alt="Grupa na Tari" style="display: block; width: 100%; height: 320px; object-fit: cover;">
+        <figcaption style="position: absolute; left: 14px; right: 14px; bottom: 13px; display: flex; justify-content: space-between; gap: 10px; font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6b675e;"><span>02 — vesla i voda</span><span>Tara</span></figcaption>
+      </figure>
+      <figure data-reveal="" data-hang="2" style="opacity: 0; position: relative; margin: 0; flex: 1 1 0; min-width: 0; margin-top: 4px; transform-origin: top center; padding: 14px 14px 40px; background: #fbfaf6; box-shadow: 0 18px 34px -22px rgba(18,17,15,0.5), 0 1px 0 rgba(18,17,15,0.06);">
+        <span style="position: absolute; top: -19px; left: 50%; margin-left: -7px; width: 14px; height: 32px; background: #c1272d; box-shadow: 0 2px 4px rgba(18,17,15,0.35);"></span>
+        <span style="position: absolute; top: -13px; left: 50%; margin-left: -9px; width: 18px; height: 3px; background: rgba(18,17,15,0.35);"></span>
+        <img src="uploads/3.webp" alt="Spust kroz kanjon" style="display: block; width: 100%; height: 340px; object-fit: cover;">
+        <figcaption style="position: absolute; left: 14px; right: 14px; bottom: 13px; display: flex; justify-content: space-between; gap: 10px; font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6b675e;"><span>03 — kanjon, širi kadar</span><span>Tara</span></figcaption>
+      </figure>
+      <figure data-reveal="" data-hang="3" style="opacity: 0; position: relative; margin: 0; flex: 1 1 0; min-width: 0; margin-top: 20px; transform-origin: top center; padding: 14px 14px 40px; background: #fbfaf6; box-shadow: 0 18px 34px -22px rgba(18,17,15,0.5), 0 1px 0 rgba(18,17,15,0.06);">
+        <span style="position: absolute; top: -19px; left: 50%; margin-left: -7px; width: 14px; height: 32px; background: #c1272d; box-shadow: 0 2px 4px rgba(18,17,15,0.35);"></span>
+        <span style="position: absolute; top: -13px; left: 50%; margin-left: -9px; width: 18px; height: 3px; background: rgba(18,17,15,0.35);"></span>
+        <img src="uploads/4.webp" alt="Grupa u čamcu, prskanje" style="display: block; width: 100%; height: 330px; object-fit: cover;">
+        <figcaption style="position: absolute; left: 14px; right: 14px; bottom: 13px; display: flex; justify-content: space-between; gap: 10px; font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6b675e;"><span>04 — grupa posle spusta</span><span>Tara</span></figcaption>
+      </figure>
+      </div>
+    </div>
+
+    <div data-reveal="" style="opacity: 0; margin-top: 44px; padding: 22px 40px 0; border-top: 1px solid rgba(18,17,15,0.18); display: flex; align-items: center; justify-content: space-between; gap: 28px; flex-wrap: wrap;">
+      <div style="display: flex; gap: 40px; font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #6b675e;">
+        <span>Više od 600 spustova</span>
+        <span>Galerija u roku od 72h</span>
+        <span>Fotografije po broju čamca</span>
+      </div>
+      <a href="#kontakt" style="display: flex; align-items: center; gap: 12px; font-family: 'Big Shoulders Display', sans-serif; font-weight: 600; font-size: 21px; text-transform: uppercase; letter-spacing: 0.04em; padding-bottom: 5px; border-bottom: 1px solid #12110f;" style-hover="color: #c1272d; border-bottom-color: #c1272d;">Cela rafting galerija</a>
+    </div>
+  </section>
+
+  <section id="kontakt" style="padding: 96px 0 96px; border-top: 1px solid #12110f; background: #efece4;">
+    <div data-reveal="" style="opacity: 0; padding: 0 40px; display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: 64px; align-items: start;">
+      <div>
+        <div style="display: flex; align-items: baseline; gap: 14px; font-size: 11px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: #6b675e;">
+          <span>02</span>
+          <span style="display: block; width: 40px; height: 1px; background: rgba(18,17,15,0.4);"></span>
+          <span>Odgovaramo u toku dana</span>
+        </div>
+        <h2 style="margin: 18px 0 0; font-family: 'Big Shoulders Display', sans-serif; font-weight: 800; text-transform: uppercase; font-size: clamp(40px, 5.4vw, 82px); line-height: 0.88; letter-spacing: -0.01em;">Zakaži<br>termin</h2>
+        <p style="margin: 22px 0 0; max-width: 38ch; font-size: 15px; line-height: 1.65; color: #3a3833; text-wrap: pretty;">
+          Napišite datum i mesto, a mi vraćamo slobodne termine i cenu istog dana. Za rafting je dovoljno da nam kažete agenciju i vreme spusta.
+        </p>
+
+        <div style="margin-top: 38px; display: grid; gap: 0;">
+          <div style="display: flex; justify-content: space-between; gap: 20px; padding: 14px 0; border-top: 1px solid rgba(18,17,15,0.18);">
+            <span style="font-size: 10.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #6b675e;">Telefon</span>
+            <a href="tel:+38765000000" style="font-family: 'Big Shoulders Display', sans-serif; font-weight: 600; font-size: 21px; letter-spacing: 0.03em;" style-hover="color: #c1272d;">+387 65 000 000</a>
+          </div>
+          <div style="display: flex; justify-content: space-between; gap: 20px; padding: 14px 0; border-top: 1px solid rgba(18,17,15,0.18);">
+            <span style="font-size: 10.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #6b675e;">Mail</span>
+            <a href="mailto:info@smfotostudio.rs" style="font-family: 'Big Shoulders Display', sans-serif; font-weight: 600; font-size: 21px; letter-spacing: 0.03em;" style-hover="color: #c1272d;">info@smfotostudio.rs</a>
+          </div>
+          <div style="display: flex; justify-content: space-between; gap: 20px; padding: 14px 0; border-top: 1px solid rgba(18,17,15,0.18);">
+            <span style="font-size: 10.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #6b675e;">Instagram</span>
+            <a href="#" style="font-family: 'Big Shoulders Display', sans-serif; font-weight: 600; font-size: 21px; letter-spacing: 0.03em;" style-hover="color: #c1272d;">@smfotostudio</a>
+          </div>
+          <div style="display: flex; justify-content: space-between; gap: 20px; padding: 14px 0; border-top: 1px solid rgba(18,17,15,0.18); border-bottom: 1px solid rgba(18,17,15,0.18);">
+            <span style="font-size: 10.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #6b675e;">Studio</span>
+            <span style="font-family: 'Big Shoulders Display', sans-serif; font-weight: 600; font-size: 21px; letter-spacing: 0.03em;">Foča</span>
+          </div>
+        </div>
+      </div>
+
+      <form data-form="" onSubmit="{{ onSubmit }}" style="display: grid; gap: 26px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 26px;">
+          <label style="display: grid; gap: 9px;">
+            <span style="font-size: 10.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #6b675e;">Ime i prezime</span>
+            <input name="ime" type="text" placeholder="Marko Marković" required="" style="width: 100%; padding: 9px 0; border: 0; border-bottom: 1px solid rgba(18,17,15,0.32); background: transparent; font-family: Archivo, sans-serif; font-size: 16px; color: #12110f; outline: none;" style-focus="border-bottom-color: #c1272d;">
+          </label>
+          <label style="display: grid; gap: 9px;">
+            <span style="font-size: 10.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #6b675e;">Telefon ili mail</span>
+            <input name="kontakt" type="text" placeholder="060 000 000" required="" style="width: 100%; padding: 9px 0; border: 0; border-bottom: 1px solid rgba(18,17,15,0.32); background: transparent; font-family: Archivo, sans-serif; font-size: 16px; color: #12110f; outline: none;" style-focus="border-bottom-color: #c1272d;">
+          </label>
+        </div>
+
+        <div style="display: grid; gap: 12px;">
+          <span style="font-size: 10.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #6b675e;">Tip snimanja</span>
+          <div data-chips="" style="display: flex; flex-wrap: wrap; gap: 10px;">
+            <button type="button" onClick="{{ onChip }}" style="padding: 10px 18px; border: 1px solid rgba(18,17,15,0.3); border-radius: 999px; background: transparent; font-family: Archivo, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: #12110f; cursor: pointer;">Rafting</button>
+            <button type="button" onClick="{{ onChip }}" style="padding: 10px 18px; border: 1px solid rgba(18,17,15,0.3); border-radius: 999px; background: transparent; font-family: Archivo, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: #12110f; cursor: pointer;">Venčanje</button>
+            <button type="button" onClick="{{ onChip }}" style="padding: 10px 18px; border: 1px solid rgba(18,17,15,0.3); border-radius: 999px; background: transparent; font-family: Archivo, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: #12110f; cursor: pointer;">Krštenje</button>
+            <button type="button" onClick="{{ onChip }}" style="padding: 10px 18px; border: 1px solid rgba(18,17,15,0.3); border-radius: 999px; background: transparent; font-family: Archivo, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: #12110f; cursor: pointer;">Rođendan</button>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 26px;">
+          <label style="display: grid; gap: 9px;">
+            <span style="font-size: 10.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #6b675e;">Datum</span>
+            <input name="datum" type="date" style="width: 100%; padding: 9px 0; border: 0; border-bottom: 1px solid rgba(18,17,15,0.32); background: transparent; font-family: Archivo, sans-serif; font-size: 16px; color: #12110f; outline: none;" style-focus="border-bottom-color: #c1272d;">
+          </label>
+          <label style="display: grid; gap: 9px;">
+            <span style="font-size: 10.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #6b675e;">Mesto</span>
+            <input name="mesto" type="text" placeholder="Tara, Perućac…" style="width: 100%; padding: 9px 0; border: 0; border-bottom: 1px solid rgba(18,17,15,0.32); background: transparent; font-family: Archivo, sans-serif; font-size: 16px; color: #12110f; outline: none;" style-focus="border-bottom-color: #c1272d;">
+          </label>
+        </div>
+
+        <label style="display: grid; gap: 9px;">
+          <span style="font-size: 10.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #6b675e;">Poruka</span>
+          <textarea name="poruka" rows="3" placeholder="Koliko ljudi, koliko sati, posebne želje…" style="width: 100%; padding: 9px 0; border: 0; border-bottom: 1px solid rgba(18,17,15,0.32); background: transparent; font-family: Archivo, sans-serif; font-size: 16px; line-height: 1.6; color: #12110f; outline: none; resize: vertical;" style-focus="border-bottom-color: #c1272d;"></textarea>
+        </label>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; padding-top: 4px;">
+          <span data-form-note="" style="font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(18,17,15,0.5);">Odgovor u roku od 24h</span>
+          <button type="submit" style="padding: 15px 30px; background: #c1272d; color: #f5f3ee; border: 1px solid #c1272d; border-radius: 999px; font-family: Archivo, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer;" style-hover="background: #12110f; border-color: #12110f;">Pošalji upit</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <footer style="background: #12110f; color: #f5f3ee; padding: 76px 0 26px; overflow: hidden;">
+    <div data-reveal="" style="opacity: 0; padding: 0 40px; display: grid; grid-template-columns: minmax(0, 1.2fr) repeat(3, minmax(0, 0.6fr)); gap: 44px; align-items: start;">
+      <div style="display: grid; gap: 22px;">
+        <span style="font-family: 'Big Shoulders Display', sans-serif; font-weight: 600; font-size: 12px; letter-spacing: 0.26em; text-transform: uppercase; color: rgba(245,243,238,0.55);">SM Foto Studio · od 2011</span>
+        <p style="margin: 0; max-width: 32ch; font-size: 15px; line-height: 1.65; color: rgba(245,243,238,0.72); text-wrap: pretty;">
+          Fotografija iz Foče, na Tari i Drini. Rafting spustovi, venčanja, krštenja i rođendani.
+        </p>
+        <a href="#" style="display: inline-flex; align-items: center; gap: 12px; align-self: start; padding: 12px 22px; border: 1px solid rgba(245,243,238,0.32); border-radius: 999px; font-size: 11px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: #f5f3ee;" style-hover="background: #c1272d; border-color: #c1272d;">Instagram</a>
+      </div>
+
+      <div style="display: grid; gap: 12px; font-size: 12.5px; letter-spacing: 0.04em;">
+        <span style="font-size: 10.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(245,243,238,0.45);">Galerije</span>
+        <a href="#rafting" style="color: rgba(245,243,238,0.85);" style-hover="color: #f5f3ee;">Rafting</a>
+        <a href="Galerija%20kategorije.dc.html#vencanja" style="color: rgba(245,243,238,0.85);" style-hover="color: #f5f3ee;">Venčanja</a>
+        <a href="Galerija%20kategorije.dc.html#krstenja" style="color: rgba(245,243,238,0.85);" style-hover="color: #f5f3ee;">Krštenja</a>
+        <a href="Galerija%20kategorije.dc.html#rodjendani" style="color: rgba(245,243,238,0.85);" style-hover="color: #f5f3ee;">Rođendani</a>
+      </div>
+
+      <div style="display: grid; gap: 12px; font-size: 12.5px; letter-spacing: 0.04em;">
+        <span style="font-size: 10.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(245,243,238,0.45);">Studio</span>
+        <a href="O%20nama.dc.html" style="color: rgba(245,243,238,0.85);" style-hover="color: #f5f3ee;">O nama</a>
+        <a href="#kontakt" style="color: rgba(245,243,238,0.85);" style-hover="color: #f5f3ee;">Zakaži termin</a>
+        <span style="color: rgba(245,243,238,0.55);">Foča</span>
+        <span style="color: rgba(245,243,238,0.55);">Sezona: april — oktobar</span>
+      </div>
+
+      <div style="display: grid; gap: 12px; font-size: 12.5px; letter-spacing: 0.04em;">
+        <span style="font-size: 10.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(245,243,238,0.45);">Kontakt</span>
+        <a href="tel:+38765000000" style="color: rgba(245,243,238,0.85);" style-hover="color: #f5f3ee;">+387 65 000 000</a>
+        <a href="mailto:info@smfotostudio.rs" style="color: rgba(245,243,238,0.85);" style-hover="color: #f5f3ee;">info@smfotostudio.rs</a>
+        <span style="color: rgba(245,243,238,0.55);">Pon — sub, 9—20h</span>
+      </div>
+    </div>
+
+    <div data-reveal="" style="opacity: 0; margin-top: 66px; padding: 0 40px;">
+      <div style="font-family: 'Big Shoulders Display', sans-serif; font-weight: 800; text-transform: uppercase; font-size: clamp(52px, 11.6vw, 190px); line-height: 0.82; letter-spacing: -0.02em; white-space: nowrap; color: #f5f3ee;">SM Foto Studio</div>
+    </div>
+
+    <div data-reveal="" style="opacity: 0; margin-top: 34px; padding: 20px 40px 0; border-top: 1px solid rgba(245,243,238,0.18); display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(245,243,238,0.5);">
+      <span>© 2026 SM Foto Studio</span>
+      <span>Sve fotografije zaštićene autorskim pravom</span>
+      <a href="#" style="color: rgba(245,243,238,0.5);" style-hover="color: #f5f3ee;">Nazad na vrh</a>
+    </div>
+  </footer>
+  
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>class Component extends DCLogic {
+  componentDidMount() {
+    const root = document.body;
+    const track = root.querySelector("[data-track]");
+    const sways = [["v2Sway1","6.4s"],["v2Sway2","7.1s"],["v2Sway3","5.8s"],["v2Sway4","6.9s"]];
+    const reveal = (el, d) => {
+      const h = el.getAttribute("data-hang");
+      if (h !== null) {
+        const tilts = [-2.4, 1.9, -1.3, 2.6];
+        const rot = tilts[Number(h) % tilts.length];
+        const delay = 0.12 * Number(h);
+        el.style.transform = `rotate(${rot}deg)`;
+        el.style.animation = `v2FadeIn .85s ease ${delay}s both`;
+        el.style.transition = "transform .5s cubic-bezier(.16,1,.3,1)";
+        el.addEventListener("pointerenter", () => { el.style.transform = `rotate(${rot}deg) translateY(-8px)`; });
+        el.addEventListener("pointerleave", () => { el.style.transform = `rotate(${rot}deg)`; });
+        return;
+      }
+      el.style.animation = `v2Reveal .9s cubic-bezier(.16,1,.3,1) ${d}s both`;
+    };
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        reveal(e.target, 0);
+        io.unobserve(e.target);
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+    root.querySelectorAll("[data-reveal]").forEach(el => {
+      if (track && track.contains(el)) return;
+      io.observe(el);
+    });
+    this.io = io;
+
+    if (track) {
+      const tio = new IntersectionObserver((entries) => {
+        if (!entries.some(e => e.isIntersecting)) return;
+        track.querySelectorAll("[data-reveal]").forEach((el, i) => reveal(el, Math.min(i, 4) * 0.08));
+        tio.disconnect();
+      }, { threshold: 0.08 });
+      tio.observe(track);
+      this.tio = tio;
+    }
+
+    const counter = root.querySelector("[data-counter]");
+    if (track) {
+      const shots = track.querySelectorAll("figure");
+      const total = String(shots.length).padStart(2, "0");
+      this.onScroll = () => {
+        if (!counter) return;
+        const mid = track.scrollLeft + track.clientWidth / 2;
+        let idx = 0, acc = 0, best = Infinity;
+        shots.forEach((f, i) => {
+          const w = f.offsetWidth + 20;
+          const d = Math.abs(mid - (acc + w / 2));
+          if (d < best) { best = d; idx = i; }
+          acc += w;
+        });
+        counter.textContent = String(idx + 1).padStart(2, "0") + " / " + total;
+      };
+      track.addEventListener("scroll", this.onScroll, { passive: true });
+
+      let down = false, startX = 0, startLeft = 0;
+      this.onDown = (e) => { down = true; startX = e.clientX; startLeft = track.scrollLeft; track.style.cursor = "grabbing"; };
+      this.onMove = (e) => { if (down) track.scrollLeft = startLeft - (e.clientX - startX); };
+      this.onUp = () => { down = false; track.style.cursor = "grab"; };
+      track.addEventListener("pointerdown", this.onDown);
+      window.addEventListener("pointermove", this.onMove);
+      window.addEventListener("pointerup", this.onUp);
+      this.track = track;
+    }
+  }
+  componentWillUnmount() {
+    if (this.io) this.io.disconnect();
+    if (this.tio) this.tio.disconnect();
+    if (this.track) {
+      this.track.removeEventListener("scroll", this.onScroll);
+      this.track.removeEventListener("pointerdown", this.onDown);
+    }
+    window.removeEventListener("pointermove", this.onMove);
+    window.removeEventListener("pointerup", this.onUp);
+  }
+  renderVals() {
+    return {
+      onCode: (e) => {
+        e.preventDefault();
+        const form = e.currentTarget;
+        const note = form.querySelector("[data-code-note]");
+        const val = (form.querySelector("input[name=camac]").value || "").trim().toUpperCase();
+        if (!note) return;
+        if (!val) {
+          note.textContent = "Upišite broj sa boka čamca";
+          note.style.color = "#c1272d";
+          return;
+        }
+        note.innerHTML = "Čamac " + val + " — galerija je objavljena. <a href=\"Galerija po kodu (desktop).dc.html\" style=\"color:#f5f3ee;border-bottom:1px solid #c1272d\">Otvori</a>";
+        note.style.color = "#f5f3ee";
+      },
+      onChip: (e) => {
+        const btn = e.currentTarget;
+        const group = btn.parentElement;
+        if (!group) return;
+        group.querySelectorAll("button").forEach(b => {
+          const on = b === btn;
+          b.style.background = on ? "#12110f" : "transparent";
+          b.style.color = on ? "#f5f3ee" : "#12110f";
+          b.style.borderColor = on ? "#12110f" : "rgba(18,17,15,0.3)";
+        });
+        this.tip = btn.textContent;
+      },
+      onSubmit: (e) => {
+        e.preventDefault();
+        const form = e.currentTarget;
+        const note = form.querySelector("[data-form-note]");
+        if (note) {
+          note.textContent = "Upit poslat — javljamo se na kontakt koji ste ostavili";
+          note.style.color = "#c1272d";
+        }
+      }
+    };
+  }
+}</script>
+</body>
+</html>

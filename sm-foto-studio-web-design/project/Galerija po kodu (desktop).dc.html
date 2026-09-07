@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Archivo:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; background: #f5f3ee; }
+  * { box-sizing: border-box; }
+  a { color: #12110f; text-decoration: none; }
+  a:hover { color: #c1272d; }
+  input, button, textarea { font-family: Archivo, Helvetica, sans-serif; }
+  @keyframes gdShimmer { 0% { background-position: -220px 0; } 100% { background-position: 260px 0; } }
+  @keyframes gdUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes gdFade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes gdModal { from { opacity: 0; transform: translate(-50%, calc(-50% + 22px)) scale(.98); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+  @keyframes gdSpin { to { transform: rotate(360deg); } }
+  @keyframes gdTicker { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+  @keyframes gdPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.82); } }
+  [data-ticker]:hover [data-ticker-track] { animation-play-state: paused; }
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #f5f3ee; color: #12110f; font-family: Archivo, Helvetica, sans-serif; display: flex; flex-direction: column;">
+
+  <div data-nav-strip="" style="display: none;">
+    <div data-nav="" style="display: none;">
+      <button type="button" data-goto="code" onClick="{{ onGoto }}" style="padding: 7px 12px; border: 1px solid rgba(18,17,15,0.3); border-radius: 999px; background: transparent; font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;">Kod</button>
+      <button type="button" data-goto="qr" onClick="{{ onGoto }}" style="padding: 7px 12px; border: 1px solid rgba(18,17,15,0.3); border-radius: 999px; background: transparent; font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;">QR ulaz</button>
+      <button type="button" data-goto="dates" onClick="{{ onGoto }}" style="padding: 7px 12px; border: 1px solid rgba(18,17,15,0.3); border-radius: 999px; background: transparent; font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;">Po datumu</button>
+      <button type="button" data-goto="locked" onClick="{{ onGoto }}" style="padding: 7px 12px; border: 1px solid rgba(18,17,15,0.3); border-radius: 999px; background: transparent; font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;">Zaključana</button>
+      <button type="button" data-goto="lightbox" onClick="{{ onGoto }}" style="padding: 7px 12px; border: 1px solid rgba(18,17,15,0.3); border-radius: 999px; background: transparent; font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;">Lightbox</button>
+      <button type="button" data-goto="buy" onClick="{{ onGoto }}" style="padding: 7px 12px; border: 1px solid rgba(18,17,15,0.3); border-radius: 999px; background: transparent; font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;">Kupovina</button>
+      <button type="button" data-goto="unlocked" onClick="{{ onGoto }}" style="padding: 7px 12px; border: 1px solid rgba(18,17,15,0.3); border-radius: 999px; background: transparent; font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;">Otključana</button>
+      <button type="button" data-goto="zip" onClick="{{ onGoto }}" style="padding: 7px 12px; border: 1px solid rgba(18,17,15,0.3); border-radius: 999px; background: transparent; font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;">ZIP</button>
+      <button type="button" data-goto="err-code" onClick="{{ onGoto }}" style="padding: 7px 12px; border: 1px solid rgba(193,39,45,0.45); border-radius: 999px; background: transparent; font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: #c1272d; cursor: pointer;">Pogrešan kod</button>
+      <button type="button" data-goto="err-expired" onClick="{{ onGoto }}" style="padding: 7px 12px; border: 1px solid rgba(193,39,45,0.45); border-radius: 999px; background: transparent; font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: #c1272d; cursor: pointer;">Istekao</button>
+      <button type="button" data-goto="err-empty" onClick="{{ onGoto }}" style="padding: 7px 12px; border: 1px solid rgba(193,39,45,0.45); border-radius: 999px; background: transparent; font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: #c1272d; cursor: pointer;">Bez slika</button>
+      <button type="button" data-goto="err-net" onClick="{{ onGoto }}" style="padding: 7px 12px; border: 1px solid rgba(193,39,45,0.45); border-radius: 999px; background: transparent; font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: #c1272d; cursor: pointer;">Prekid mreže</button>
+    </div>
+  </div>
+
+  <header style="display: flex; align-items: center; justify-content: space-between; gap: 28px; padding: 16px 40px; background: #f5f3ee; border-bottom: 1px solid rgba(18,17,15,0.16);">
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <img src="uploads/610553248_18017187089801123_5097008291130239999_n.jpg" alt="SM Foto Studio" style="display: block; width: 40px; height: 40px; object-fit: contain; mix-blend-mode: multiply;" />
+      <span style="display: block; width: 1px; height: 24px; background: rgba(18,17,15,0.2);"></span>
+      <span data-i18n="appName" style="font-family: 'Big Shoulders Display', sans-serif; font-weight: 600; font-size: 12px; letter-spacing: 0.24em; text-transform: uppercase; color: #6b675e;">Preuzmi svoje fotografije</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 18px;">
+      <span data-i18n="helpLine" style="font-size: 12.5px; color: #6b675e;">Pomoć na bazi: +387 65 000 000</span>
+      <div data-lang="" style="display: flex; border: 1px solid rgba(18,17,15,0.28); border-radius: 999px; overflow: hidden;">
+        <button type="button" data-set-lang="bs" onClick="{{ onLang }}" style="min-width: 46px; padding: 9px 12px; border: 0; background: #12110f; color: #f5f3ee; font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;">BS</button>
+        <button type="button" data-set-lang="en" onClick="{{ onLang }}" style="min-width: 46px; padding: 9px 12px; border: 0; background: transparent; color: #12110f; font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <div data-shell="" style="position: relative; flex: 1; min-height: 660px;">
+
+    <div data-screen="code" style="position: absolute; inset: 0; background: #f5f3ee; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(380px, 0.85fr); animation: gdFade .3s ease both;">
+      <div style="padding: 44px 56px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto;">
+        <span data-i18n="codeKicker" style="font-family: ui-monospace, monospace; font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(18,17,15,0.5);">Kartica sa spusta</span>
+        <h1 data-i18n="codeTitle" style="margin: 16px 0 0; font-family: 'Big Shoulders Display', sans-serif; font-weight: 800; font-size: clamp(40px, 4.4vw, 70px); line-height: 0.88; text-transform: uppercase; letter-spacing: -0.015em;">Ukucaj kod<br />svoje grupe</h1>
+        <p data-i18n="codeBody" style="margin: 20px 0 0; max-width: 46ch; font-size: 16px; line-height: 1.6; color: #3a3833; text-wrap: pretty;">Kod od osam znakova je na kartici koju ste dobili na bazi. Otvara sve fotografije vašeg čamca — cijelu galeriju grupe, kao jedan paket.</p>
+
+        <div style="margin-top: 34px; display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap;">
+          <label style="display: grid; gap: 10px;">
+            <span data-i18n="codeLabel" style="font-size: 10.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #6b675e;">Kod galerije</span>
+            <input data-code-input="" type="text" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="8" placeholder="K7XM4Q2P" onInput="{{ onCodeInput }}" style="width: 340px; height: 70px; padding: 0 18px; border: 1.5px solid rgba(18,17,15,0.35); border-radius: 14px; background: #fbfaf6; font-family: 'Big Shoulders Display', sans-serif; font-weight: 800; font-size: 36px; letter-spacing: 0.2em; text-transform: uppercase; color: #12110f; outline: none;" style-focus="border-color: #c1272d;" />
+          </label>
+          <button type="button" data-i18n="codeCta" onClick="{{ onSubmitCode }}" style="height: 70px; padding: 0 34px; border: 1px solid #c1272d; border-radius: 14px; background: #c1272d; color: #f5f3ee; font-size: 12px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer;" style-hover="background: #12110f; border-color: #12110f;">Otvori galeriju</button>
+        </div>
+
+        <div data-code-error="" style="display: none; margin-top: 16px; max-width: 520px; padding: 14px 16px; border-radius: 12px; background: rgba(193,39,45,0.1); border: 1px solid rgba(193,39,45,0.35);">
+          <span data-code-error-text="" style="display: block; font-size: 14px; line-height: 1.5; color: #8f1f24;">Kod nije prepoznat. Provjerite karticu.</span>
+          <span data-attempts="" style="display: block; margin-top: 5px; font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(143,31,36,0.75);">Još 2 pokušaja</span>
+        </div>
+
+        <div style="margin-top: 26px; padding-top: 20px; border-top: 1px solid rgba(18,17,15,0.16); display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+          <span data-i18n="noCode" style="font-size: 14px; color: #3a3833;">Nemate kod ili ste izgubili karticu?</span>
+          <button type="button" data-i18n="byDateCta" data-goto="dates" onClick="{{ onGoto }}" style="min-height: 48px; padding: 0 22px; border: 1px solid rgba(18,17,15,0.35); border-radius: 999px; background: transparent; font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer;" style-hover="border-color: #12110f; background: rgba(18,17,15,0.05);">Pregled po datumu</button>
+        </div>
+      </div>
+
+      <div data-ticker="" style="position: relative; overflow: hidden; background: #ebe7de; border-left: 1px solid rgba(18,17,15,0.16); display: flex; flex-direction: column;">
+        <div style="padding: 26px 32px 18px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid rgba(18,17,15,0.14);">
+          <span data-i18n="feedTitle" style="font-family: 'Big Shoulders Display', sans-serif; font-weight: 800; font-size: 26px; line-height: 1; text-transform: uppercase;">Danas objavljeno</span>
+          <span style="display: flex; align-items: center; gap: 8px;">
+            <span style="display: block; width: 7px; height: 7px; border-radius: 999px; background: #c1272d; animation: gdPulse 1.8s ease-in-out infinite;"></span>
+            <span data-i18n="feedLive" style="font-family: ui-monospace, monospace; font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(18,17,15,0.55);">u toku</span>
+          </span>
+        </div>
+
+        <div style="position: relative; flex: 1; min-height: 0; overflow: hidden; mask-image: linear-gradient(180deg, transparent 0, #000 46px, #000 calc(100% - 56px), transparent 100%); -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 46px, #000 calc(100% - 56px), transparent 100%);">
+          <div data-ticker-track="" style="position: absolute; left: 0; right: 0; top: 0; display: grid; animation: gdTicker 34s linear infinite;"></div>
+        </div>
+
+        <div style="padding: 16px 32px 24px; border-top: 1px solid rgba(18,17,15,0.14); display: flex; align-items: center; justify-content: space-between; gap: 14px;">
+          <span data-i18n="feedFoot" style="max-width: 30ch; font-size: 12.5px; line-height: 1.5; color: #6b675e;">Slike objavljujemo isto veče, obično do 22:00.</span>
+          <span data-feed-total="" style="font-family: ui-monospace, monospace; font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(18,17,15,0.5);">1 432 nove slike</span>
+        </div>
+      </div>
+    </div>
+
+    <div data-screen="dates" style="display: none; position: absolute; inset: 0; background: #f5f3ee;">
+      <div style="padding: 30px 40px 18px; border-bottom: 1px solid rgba(18,17,15,0.16); display: flex; align-items: flex-end; justify-content: space-between; gap: 28px; flex-wrap: wrap;">
+        <div>
+          <button type="button" data-goto="code" onClick="{{ onGoto }}" style="min-height: 40px; padding: 0; border: 0; background: transparent; font-size: 11px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: #6b675e; cursor: pointer;">← <span data-i18n="back">Nazad</span></button>
+          <h2 data-i18n="datesTitle" style="margin: 6px 0 0; font-family: 'Big Shoulders Display', sans-serif; font-weight: 800; font-size: 46px; line-height: 0.92; text-transform: uppercase;">Pregled po datumu</h2>
+        </div>
+        <p data-i18n="datesBody" style="margin: 0 0 6px; max-width: 46ch; font-size: 15px; line-height: 1.6; color: #3a3833;">Izaberite dan spusta, pa svoj termin i čamac. Kod sa kartice nije potreban za pregled, tek za otključavanje.</p>
+      </div>
+      <div data-scroll="" style="position: absolute; inset: 132px 0 0; overflow-y: auto;">
+        <div data-day-list="" style="max-width: 1100px; margin: 0 auto; padding: 10px 40px 60px;"></div>
+      </div>
+    </div>
+
+    <div data-screen="gallery" style="display: none; position: absolute; inset: 0; background: #f5f3ee;">
+      <div style="position: absolute; top: 0; left: 0; right: 0; z-index: 2; padding: 20px 40px 16px; background: #f5f3ee; border-bottom: 1px solid rgba(18,17,15,0.16); display: flex; align-items: flex-end; justify-content: space-between; gap: 28px; flex-wrap: wrap;">
+        <div style="display: grid; gap: 6px;">
+          <button type="button" data-goto="dates" onClick="{{ onGoto }}" style="min-height: 34px; padding: 0; border: 0; background: transparent; font-size: 11px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: #6b675e; cursor: pointer; text-align: left;">← <span data-i18n="allRuns">Svi termini</span></button>
+          <span data-gal-name="" style="font-family: 'Big Shoulders Display', sans-serif; font-weight: 800; font-size: 40px; line-height: 0.95; text-transform: uppercase;">Čamac 3 · 14:20</span>
+          <span data-gal-meta="" style="font-family: ui-monospace, monospace; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(18,17,15,0.55);">17.08.2026 · 312 slika</span>
+        </div>
+        <div data-lock-note="" style="display: flex; align-items: center; gap: 9px; padding-bottom: 6px; font-size: 12.5px; color: #8f1f24;">
+          <span style="display: block; width: 7px; height: 7px; border-radius: 999px; background: #c1272d;"></span>
+          <span data-i18n="lockedNote">Pregled sa vodenim žigom</span>
+        </div>
+      </div>
+
+      <div data-net-banner="" style="display: none; position: absolute; top: 148px; left: 40px; z-index: 4; max-width: 460px; padding: 16px 18px; border-radius: 14px; background: #12110f; color: #f5f3ee; animation: gdUp .35s ease both;">
+        <span data-i18n="netTitle" style="display: block; font-size: 14px; line-height: 1.5;">Veza je prekinuta. Učitavanje je zaustavljeno.</span>
+        <button type="button" data-i18n="retry" onClick="{{ onRetry }}" style="margin-top: 12px; min-height: 44px; padding: 0 22px; border: 1px solid rgba(245,243,238,0.4); border-radius: 999px; background: transparent; color: #f5f3ee; font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer;">Pokušaj ponovo</button>
+      </div>
+
+      <div data-scroll="" data-grid-scroll="" style="position: absolute; inset: 150px 0 92px; overflow-y: auto;">
+        <div data-grid="" style="position: relative; max-width: 1600px; margin: 0 auto;"></div>
+        <div data-empty="" style="display: none; padding: 90px 40px; text-align: center;">
+          <span data-i18n="emptyTitle" style="display: block; font-family: 'Big Shoulders Display', sans-serif; font-weight: 800; font-size: 38px; text-transform: uppercase;">Termin bez slika</span>
+          <span data-i18n="emptyBody" style="display: block; margin: 12px auto 0; max-width: 46ch; font-size: 15px; line-height: 1.6; color: #3a3833;">Za ovaj čamac još nema objavljenih fotografija. Provjerite ponovo večeras ili nas pozovite.</span>
+        </div>
+      </div>
+
+      <div data-bottom-locked="" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; padding: 16px 40px; background: #f5f3ee; border-top: 1px solid rgba(18,17,15,0.2); display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: baseline; gap: 16px;">
+          <span data-price="" style="font-family: 'Big Shoulders Display', sans-serif; font-weight: 800; font-size: 34px; line-height: 1;">60 KM</span>
+          <span data-i18n="wholeGallery" style="font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(18,17,15,0.55);">cijela galerija grupe · 312 slika</span>
+        </div>
+        <button type="button" data-i18n="unlockCta" data-goto="buy" onClick="{{ onGoto }}" style="min-height: 56px; padding: 0 36px; border: 1px solid #c1272d; border-radius: 999px; background: #c1272d; color: #f5f3ee; font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer;" style-hover="background: #12110f; border-color: #12110f;">Otključaj galeriju</button>
+      </div>
+
+      <div data-bottom-unlocked="" style="display: none; position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; padding: 16px 40px; background: #12110f; color: #f5f3ee; display: none; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
+        <div style="display: grid; gap: 4px;">
+          <span data-i18n="downloadTitle" style="font-family: 'Big Shoulders Display', sans-serif; font-weight: 800; font-size: 26px; text-transform: uppercase;">Skidanje</span>
+          <span data-i18n="unlockedTag" style="font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(245,243,238,0.6);">otključano · 312 slika · link aktivan 30 dana</span>
+        </div>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <button type="button" data-zip="web" onClick="{{ onZip }}" style="display: grid; gap: 3px; min-height: 58px; padding: 10px 22px; border: 1px solid rgba(245,243,238,0.35); border-radius: 14px; background: transparent; color: #f5f3ee; text-align: left; cursor: pointer;" style-hover="background: rgba(245,243,238,0.1);">
+            <span data-i18n="zipWeb" style="font-size: 14px; font-weight: 500;">Za telefon i mreže</span>
+            <span data-i18n="zipWebMeta" style="font-family: ui-monospace, monospace; font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(245,243,238,0.6);">2048 px · ~150 MB</span>
+          </button>
+          <button type="button" data-zip="full" onClick="{{ onZip }}" style="display: grid; gap: 3px; min-height: 58px; padding: 10px 22px; border: 1px solid rgba(245,243,238,0.35); border-radius: 14px; background: transparent; color: #f5f3ee; text-align: left; cursor: pointer;" style-hover="background: rgba(245,243,238,0.1);">
+            <span data-i18n="zipFull" style="font-size: 14px; font-weight: 500;">Puna rezolucija</span>
+            <span data-i18n="zipFullMeta" style="font-family: ui-monospace, monospace; font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(245,243,238,0.6);">~2,4 GB · traje dugo</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div data-screen="lightbox" style="display: none; position: absolute; inset: 0; z-index: 6; background: #0b0a09; animation: gdFade .25s ease both;">
+      <div onClick="{{ onLbClose }}" style="position: absolute; inset: 0;"></div>
+      <div style="position: absolute; top: 0; left: 0; right: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 20px 32px;">
+        <span data-lb-counter="" style="font-family: ui-monospace, monospace; font-size: 12px; letter-spacing: 0.16em; color: rgba(245,243,238,0.75);">47 / 312</span>
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <span data-i18n="lbHintDesktop" style="font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(245,243,238,0.5);">Strelice ← → · Esc zatvara</span>
+          <button type="button" onClick="{{ onLbClose }}" style="min-width: 46px; min-height: 46px; border: 1px solid rgba(245,243,238,0.4); border-radius: 999px; background: transparent; color: #f5f3ee; font-size: 17px; line-height: 1; cursor: pointer;">×</button>
+        </div>
+      </div>
+      <button type="button" data-lb-prev="" onClick="{{ onLbPrev }}" style="position: absolute; left: 24px; top: 50%; z-index: 3; transform: translateY(-50%); width: 54px; height: 54px; border: 1px solid rgba(245,243,238,0.4); border-radius: 999px; background: rgba(11,10,9,0.5); color: #f5f3ee; font-size: 18px; cursor: pointer;" style-hover="background: #c1272d; border-color: #c1272d;">←</button>
+      <button type="button" data-lb-next="" onClick="{{ onLbNext }}" style="position: absolute; right: 24px; top: 50%; z-index: 3; transform: translateY(-50%); width: 54px; height: 54px; border: 1px solid rgba(245,243,238,0.4); border-radius: 999px; background: rgba(11,10,9,0.5); color: #f5f3ee; font-size: 18px; cursor: pointer;" style-hover="background: #c1272d; border-color: #c1272d;">→</button>
+      <div data-lb-stage="" style="position: absolute; inset: 78px 100px 104px; z-index: 2; display: flex; align-items: center; justify-content: center;"></div>
+      <div data-lb-bottom="" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; padding: 18px 32px 24px; display: flex; align-items: center; justify-content: center; gap: 18px;">
+        <span data-i18n="lbLockedNote" style="font-size: 13px; color: rgba(245,243,238,0.7);">Sve slike su u pregledu sa vodenim žigom.</span>
+        <button type="button" data-i18n="unlockCta" data-goto="buy" onClick="{{ onGoto }}" style="min-height: 52px; padding: 0 30px; border: 1px solid #c1272d; border-radius: 999px; background: #c1272d; color: #f5f3ee; font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer;">Otključaj galeriju</button>
+      </div>
+    </div>
+
+    <div data-screen="buy" style="display: none; position: absolute; inset: 0; z-index: 7;">
+      <div onClick="{{ onSheetClose }}" style="position: absolute; inset: 0; background: rgba(11,10,9,0.5); animation: gdFade .25s ease both;"></div>
+      <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: min(880px, calc(100% - 64px)); max-height: calc(100% - 64px); overflow-y: auto; background: #f5f3ee; border-radius: 20px; animation: gdModal .35s cubic-bezier(.16,1,.3,1) both; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);">
+        <div style="padding: 32px 30px;">
+          <span data-i18n="buyTitle" style="display: block; font-family: 'Big Shoulders Display', sans-serif; font-weight: 800; font-size: 38px; line-height: 0.95; text-transform: uppercase;">Otključaj galeriju</span>
+          <span data-buy-meta="" style="display: block; margin-top: 6px; font-family: ui-monospace, monospace; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(18,17,15,0.55);">Čamac 3 · 14:20 · 312 slika</span>
+          <div style="margin-top: 22px; padding-top: 18px; border-top: 1px solid rgba(18,17,15,0.18); display: flex; align-items: baseline; justify-content: space-between; gap: 14px;">
+            <span data-i18n="buyPriceLabel" style="font-size: 11px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: #6b675e;">Cijena paketa</span>
+            <span data-buy-price="" style="font-family: 'Big Shoulders Display', sans-serif; font-weight: 800; font-size: 40px; line-height: 1;">60 KM</span>
+          </div>
+          <div style="margin-top: 18px; display: grid; gap: 10px; font-size: 14px; line-height: 1.5; color: #3a3833;">
+            <span data-i18n="buyItem1">Sve 312 fotografija vaše grupe</span>
+            <span data-i18n="buyItem2">Originalna rezolucija, bez vodenog žiga</span>
+            <span data-i18n="buyItem3">Dva formata za skidanje: za telefon i puna rezolucija</span>
+            <span data-i18n="buyItem4">Link ostaje aktivan 30 dana</span>
+          </div>
+          <span data-i18n="buyFoot" style="display: block; margin-top: 22px; font-family: ui-monospace, monospace; font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(18,17,15,0.5);">Bez registracije · kod je vaša potvrda</span>
+        </div>
+        <div style="padding: 32px 30px; background: #efece4; border-radius: 0 20px 20px 0; display: flex; flex-direction: column;">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+            <span data-i18n="payLabel" style="font-size: 10.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #6b675e;">Način plaćanja</span>
+            <button type="button" onClick="{{ onSheetClose }}" style="min-width: 44px; min-height: 44px; border: 1px solid rgba(18,17,15,0.28); border-radius: 999px; background: transparent; font-size: 15px; line-height: 1; cursor: pointer;">×</button>
+          </div>
+          <div data-pay="" style="margin-top: 14px; display: grid; gap: 10px;">
+            <button type="button" data-pay-opt="cash" onClick="{{ onPay }}" style="display: grid; gap: 5px; padding: 16px 18px; border: 1.5px solid #12110f; border-radius: 14px; background: #12110f; color: #f5f3ee; text-align: left; cursor: pointer;">
+              <span data-i18n="payCash" style="font-size: 15px; font-weight: 600;">Gotovinom na bazi</span>
+              <span data-i18n="payCashBody" style="font-size: 13px; line-height: 1.45; color: rgba(245,243,238,0.75);">Platite operateru na bazi — otključava galeriju odmah, dok ste tu.</span>
+            </button>
+            <div style="display: grid; gap: 5px; padding: 16px 18px; border: 1px dashed rgba(18,17,15,0.3); border-radius: 14px;">
+              <span data-i18n="payCard" style="font-size: 15px; font-weight: 600; color: rgba(18,17,15,0.5);">Kartica</span>
+              <span data-i18n="payCardBody" style="font-size: 13px; line-height: 1.45; color: rgba(18,17,15,0.45);">U pripremi — plaćanje karticom uskoro, na ovom istom mjestu.</span>
+            </div>
+          </div>
+          <button type="button" data-i18n="buyConfirm" onClick="{{ onUnlock }}" style="margin-top: auto; width: 100%; min-height: 58px; border: 1px solid #c1272d; border-radius: 14px; background: #c1272d; color: #f5f3ee; font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer;" style-hover="background: #12110f; border-color: #12110f;">Potvrdi i otključaj</button>
+        </div>
+      </div>
+    </div>
+
+    <div data-screen="zip" style="display: none; position: absolute; inset: 0; z-index: 7;">
+      <div onClick="{{ onSheetClose }}" style="position: absolute; inset: 0; background: rgba(11,10,9,0.5); animation: gdFade .25s ease both;"></div>
+      <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: min(560px, calc(100% - 64px)); padding: 30px; background: #f5f3ee; border-radius: 20px; animation: gdModal .35s cubic-bezier(.16,1,.3,1) both;">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <span style="display: block; width: 20px; height: 20px; border: 2px solid rgba(18,17,15,0.2); border-top-color: #c1272d; border-radius: 999px; animation: gdSpin 1s linear infinite;"></span>
+          <span data-i18n="zipTitle" style="font-family: 'Big Shoulders Display', sans-serif; font-weight: 800; font-size: 30px; text-transform: uppercase;">Pravimo vaš ZIP</span>
+        </div>
+        <div style="margin-top: 18px; height: 6px; border-radius: 999px; background: rgba(18,17,15,0.14); overflow: hidden;">
+          <div data-zip-bar="" style="width: 8%; height: 100%; background: #c1272d; transition: width .4s linear;"></div>
+        </div>
+        <div style="margin-top: 10px; display: flex; justify-content: space-between; gap: 12px; font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(18,17,15,0.55);">
+          <span data-zip-status="">24 / 312 slika</span>
+          <span data-zip-pct="">8%</span>
+        </div>
+        <p data-i18n="zipBody" style="margin: 18px 0 0; font-size: 14px; line-height: 1.55; color: #3a3833;">Možete zatvoriti stranicu. Kad paket bude gotov, link za skidanje stiže na mejl i ostaje aktivan 30 dana.</p>
+        <div style="margin-top: 18px; display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap;">
+          <label style="display: grid; gap: 9px; flex: 1; min-width: 220px;">
+            <span data-i18n="zipMailLabel" style="font-size: 10.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #6b675e;">Mejl za link</span>
+            <input data-zip-mail="" type="email" placeholder="ime@mail.com" style="width: 100%; min-height: 54px; padding: 0 16px; border: 1.5px solid rgba(18,17,15,0.3); border-radius: 12px; background: #fbfaf6; font-size: 16px; color: #12110f; outline: none;" style-focus="border-color: #c1272d;" />
+          </label>
+          <button type="button" data-i18n="zipSave" onClick="{{ onZipSave }}" style="min-height: 54px; padding: 0 26px; border: 1px solid #12110f; border-radius: 12px; background: #12110f; color: #f5f3ee; font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer;">Sačuvaj mejl</button>
+        </div>
+        <span data-zip-note="" style="display: none; margin-top: 12px; font-size: 13.5px;"></span>
+      </div>
+    </div>
+
+    <div data-screen="blocked" style="display: none; position: absolute; inset: 0; background: #f5f3ee; padding: 90px 40px; justify-content: center;">
+      <div style="max-width: 620px;">
+        <span data-blocked-kicker="" style="font-family: ui-monospace, monospace; font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #c1272d;">Kod istekao</span>
+        <h2 data-blocked-title="" style="margin: 14px 0 0; font-family: 'Big Shoulders Display', sans-serif; font-weight: 800; font-size: 58px; line-height: 0.9; text-transform: uppercase;">Galerija je arhivirana</h2>
+        <p data-blocked-body="" style="margin: 18px 0 0; font-size: 16px; line-height: 1.6; color: #3a3833; text-wrap: pretty;">Fotografije sa ovog spusta su bile dostupne 30 dana i sada su u arhivi. Pozovite nas sa kodom sa kartice i vraćamo ih na dan.</p>
+        <div style="margin-top: 30px; display: flex; gap: 12px; flex-wrap: wrap;">
+          <a href="tel:+38765000000" data-i18n="callUs" style="display: flex; align-items: center; min-height: 56px; padding: 0 30px; border: 1px solid #c1272d; border-radius: 999px; background: #c1272d; color: #f5f3ee; font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;">Pozovi studio</a>
+          <button type="button" data-i18n="back" data-goto="code" onClick="{{ onGoto }}" style="min-height: 56px; padding: 0 26px; border: 1px solid rgba(18,17,15,0.35); border-radius: 999px; background: transparent; font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer;">Nazad</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;price&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;60 KM&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Sadržaj&quot;},&quot;startLang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;bs&quot;,&quot;en&quot;],&quot;default&quot;:&quot;bs&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Sadržaj&quot;}}">
+const TOTAL = 312;
+const I18N = {
+  appName: ["Preuzmi svoje fotografije", "Get your photos"],
+  helpLine: ["Pomoć na bazi: +387 65 000 000", "Help at the base: +387 65 000 000"],
+  codeKicker: ["Kartica sa spusta", "Card from the river"],
+  codeTitle: ["Ukucaj kod<br />svoje grupe", "Enter your<br />group code"],
+  codeBody: ["Kod od osam znakova je na kartici koju ste dobili na bazi. Otvara sve fotografije vašeg čamca — cijelu galeriju grupe, kao jedan paket.", "The eight-character code is on the card you got at the base. It opens every photo from your raft — the group's whole gallery, as one package."],
+  codeLabel: ["Kod galerije", "Gallery code"],
+  codeCta: ["Otvori galeriju", "Open gallery"],
+  noCode: ["Nemate kod ili ste izgubili karticu?", "No code, or lost the card?"],
+  byDateCta: ["Pregled po datumu", "Browse by date"],
+  back: ["Nazad", "Back"],
+  allRuns: ["Svi termini", "All runs"],
+  datesTitle: ["Pregled po datumu", "Browse by date"],
+  datesBody: ["Izaberite dan spusta, pa svoj termin i čamac. Kod sa kartice nije potreban za pregled, tek za otključavanje.", "Pick the day of your descent, then your run and raft. The card code is only needed to unlock, not to browse."],
+  lockedNote: ["Pregled sa vodenim žigom", "Watermarked preview"],
+  wholeGallery: ["cijela galerija grupe · 312 slika", "the group's full gallery · 312 photos"],
+  unlockCta: ["Otključaj galeriju", "Unlock gallery"],
+  lbHintDesktop: ["Strelice ← → · Esc zatvara", "Arrow keys ← → · Esc closes"],
+  lbLockedNote: ["Sve slike su u pregledu sa vodenim žigom.", "Every photo is a watermarked preview."],
+  buyTitle: ["Otključaj galeriju", "Unlock gallery"],
+  buyPriceLabel: ["Cijena paketa", "Package price"],
+  buyItem1: ["Sve 312 fotografija vaše grupe", "All 312 photos of your group"],
+  buyItem2: ["Originalna rezolucija, bez vodenog žiga", "Original resolution, no watermark"],
+  buyItem3: ["Dva formata za skidanje: za telefon i puna rezolucija", "Two download formats: phone size and full resolution"],
+  buyItem4: ["Link ostaje aktivan 30 dana", "The link stays active for 30 days"],
+  payLabel: ["Način plaćanja", "Payment method"],
+  payCash: ["Gotovinom na bazi", "Cash at the base"],
+  payCashBody: ["Platite operateru na bazi — otključava galeriju odmah, dok ste tu.", "Pay the operator at the base — they unlock the gallery right away, while you wait."],
+  payCard: ["Kartica", "Card"],
+  payCardBody: ["U pripremi — plaćanje karticom uskoro, na ovom istom mjestu.", "Coming soon — card payment will appear right here."],
+  buyConfirm: ["Potvrdi i otključaj", "Confirm and unlock"],
+  buyFoot: ["Bez registracije · kod je vaša potvrda", "No account needed · your code is the receipt"],
+  downloadTitle: ["Skidanje", "Download"],
+  unlockedTag: ["otključano · 312 slika · link aktivan 30 dana", "unlocked · 312 photos · link active 30 days"],
+  zipWeb: ["Za telefon i mreže", "For phone and social"],
+  zipWebMeta: ["2048 px · ~150 MB", "2048 px · ~150 MB"],
+  zipFull: ["Puna rezolucija", "Full resolution"],
+  zipFullMeta: ["~2,4 GB · traje dugo", "~2.4 GB · takes a while"],
+  zipTitle: ["Pravimo vaš ZIP", "Building your ZIP"],
+  zipBody: ["Možete zatvoriti stranicu. Kad paket bude gotov, link za skidanje stiže na mejl i ostaje aktivan 30 dana.", "You can close this page. When the package is ready the download link arrives by email and stays active for 30 days."],
+  zipMailLabel: ["Mejl za link", "Email for the link"],
+  zipSave: ["Sačuvaj mejl", "Save email"],
+  netTitle: ["Veza je prekinuta. Učitavanje je zaustavljeno.", "Connection lost. Loading has stopped."],
+  retry: ["Pokušaj ponovo", "Try again"],
+  emptyTitle: ["Termin bez slika", "No photos yet"],
+  emptyBody: ["Za ovaj čamac još nema objavljenih fotografija. Provjerite ponovo večeras ili nas pozovite.", "Nothing published for this raft yet. Check again tonight or give us a call."],
+  callUs: ["Pozovi studio", "Call the studio"],
+  cardTag: ["kadar sa spusta", "frame from the river"],
+  feedTitle: ["Danas objavljeno", "Published today"],
+  feedLive: ["u toku", "live"],
+  feedFoot: ["Slike objavljujemo isto veče, obično do 22:00.", "Photos go up the same evening, usually by 22:00."],
+  rightCaption: ["Fotografije sa vašeg spusta čekaju otključavanje.", "Photos from your descent are waiting to be unlocked."]
+};
+const DAYS = [
+  { d: "17.08.2026", label: "Ponedjeljak", runs: [
+    { name: "Čamac 3 · 14:20", n: 312 }, { name: "Čamac 7 · 14:20", n: 268 }, { name: "Čamac 1 · 09:40", n: 341 }
+  ]},
+  { d: "16.08.2026", label: "Nedjelja", runs: [
+    { name: "Čamac 2 · 10:00", n: 297 }, { name: "Čamac 5 · 15:10", n: 0 }
+  ]},
+  { d: "15.08.2026", label: "Subota", runs: [
+    { name: "Čamac 4 · 09:40", n: 355 }, { name: "Čamac 9 · 14:20", n: 214 }
+  ]}
+];
+
+class Component extends DCLogic {
+  componentDidMount() {
+    this.root = document.body;
+    this.lang = (this.props.startLang ?? "bs") === "en" ? 1 : 0;
+    this.locked = true;
+    this.attempts = 3;
+    this.loaded = {};
+    this.timers = [];
+    this.netDown = false;
+    this.count = TOTAL;
+    this.tiles = new Map();
+    const price = this.props.price ?? "60 KM";
+    this.root.querySelectorAll("[data-price], [data-buy-price]").forEach(el => { el.textContent = price; });
+    this.buildDays();
+    this.buildFeed();
+    this.applyLang();
+    this.setupGrid();
+    this.onKey = (e) => {
+      if (this.current !== "lightbox") return;
+      if (e.key === "ArrowRight") this.step(1);
+      else if (e.key === "ArrowLeft") this.step(-1);
+      else if (e.key === "Escape") { this.show("gallery"); this.markNav(this.locked ? "locked" : "unlocked"); }
+    };
+    window.addEventListener("keydown", this.onKey);
+    this.show("code");
+    this.markNav("code");
+  }
+  componentWillUnmount() {
+    this.timers.forEach(t => clearTimeout(t));
+    if (this.zipTimer) clearInterval(this.zipTimer);
+    if (this.scrollEl && this.onScroll) this.scrollEl.removeEventListener("scroll", this.onScroll);
+    window.removeEventListener("keydown", this.onKey);
+    if (this.onScroll) window.removeEventListener("resize", this.onResize);
+  }
+
+  q(sel) { return this.root.querySelector(sel); }
+  qa(sel) { return Array.from(this.root.querySelectorAll(sel)); }
+  t(key) { return I18N[key] ? I18N[key][this.lang] : ""; }
+
+  show(name) {
+    this.qa("[data-screen]").forEach(el => { el.style.display = "none"; });
+    const el = this.q(`[data-screen="${name}"]`);
+    if (el) el.style.display = (name === "code" || name === "blocked") ? "grid" : "block";
+    if (el && name === "blocked") el.style.display = "flex";
+    this.current = name;
+  }
+  markNav(key) {
+    this.qa("[data-nav] [data-goto]").forEach(b => {
+      const k = b.getAttribute("data-goto");
+      const on = k === key;
+      const err = k.startsWith("err");
+      b.style.background = on ? "#12110f" : "transparent";
+      b.style.color = on ? "#f5f3ee" : (err ? "#c1272d" : "#12110f");
+      b.style.borderColor = on ? "#12110f" : (err ? "rgba(193,39,45,0.45)" : "rgba(18,17,15,0.3)");
+    });
+  }
+
+  buildDays() {
+    const list = this.q("[data-day-list]");
+    if (!list) return;
+    list.textContent = "";
+    DAYS.forEach((day) => {
+      const wrap = document.createElement("div");
+      wrap.style.cssText = "border-bottom:1px solid rgba(18,17,15,0.16);";
+      const head = document.createElement("button");
+      head.type = "button";
+      head.style.cssText = "width:100%;min-height:74px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 4px;border:0;background:transparent;text-align:left;cursor:pointer;";
+      head.innerHTML = `<span style="display:flex;align-items:baseline;gap:18px"><span style="font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:30px;text-transform:uppercase">${day.d}</span><span style="font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(18,17,15,.55)">${day.label} · ${day.runs.length} termina</span></span><span style="font-size:22px;color:rgba(18,17,15,.5)">+</span>`;
+      const body = document.createElement("div");
+      body.style.cssText = "display:none;padding:0 4px 18px;gap:12px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));";
+      day.runs.forEach((run) => {
+        const item = document.createElement("button");
+        item.type = "button";
+        item.style.cssText = "min-height:88px;display:flex;align-items:center;gap:14px;padding:12px 14px;border:1px solid rgba(18,17,15,.18);border-radius:14px;background:#fbfaf6;text-align:left;cursor:pointer;";
+        item.innerHTML = `<span style="flex:0 0 auto;width:64px;height:64px;background-color:${run.n ? "#e0dbcf" : "#ddd9d0"};background-image:repeating-linear-gradient(112deg,rgba(18,17,15,.08) 0 2px,rgba(18,17,15,0) 2px 12px)"></span><span style="display:grid;gap:4px"><span style="font-size:15.5px;font-weight:500">${run.name}</span><span style="font-family:ui-monospace,monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(18,17,15,.55)">${run.n ? run.n + " slika" : "još nema slika"}</span></span>`;
+        item.addEventListener("mouseenter", () => { item.style.borderColor = "#12110f"; });
+        item.addEventListener("mouseleave", () => { item.style.borderColor = "rgba(18,17,15,.18)"; });
+        item.addEventListener("click", () => this.openGallery(run, day.d, true));
+        body.appendChild(item);
+      });
+      head.addEventListener("click", () => {
+        const open = body.style.display !== "none";
+        body.style.display = open ? "none" : "grid";
+        head.querySelector("span:last-child").textContent = open ? "+" : "–";
+      });
+      wrap.appendChild(head);
+      wrap.appendChild(body);
+      list.appendChild(wrap);
+    });
+  }
+
+  buildFeed() {
+    const track = this.q("[data-ticker-track]");
+    if (!track) return;
+    const feed = [
+      { name: "Čamac 3 · 14:20", n: 312, ago: ["prije 40 min", "40 min ago"], run: DAYS[0].runs[0], date: DAYS[0].d },
+      { name: "Čamac 7 · 14:20", n: 268, ago: ["prije 1 h", "1 h ago"], run: DAYS[0].runs[1], date: DAYS[0].d },
+      { name: "Čamac 1 · 09:40", n: 341, ago: ["prije 3 h", "3 h ago"], run: DAYS[0].runs[2], date: DAYS[0].d },
+      { name: "Čamac 2 · 10:00", n: 297, ago: ["juče, 21:40", "yesterday, 21:40"], run: DAYS[1].runs[0], date: DAYS[1].d },
+      { name: "Čamac 9 · 14:20", n: 214, ago: ["juče, 20:10", "yesterday, 20:10"], run: DAYS[2].runs[1], date: DAYS[2].d }
+    ];
+    this.feed = feed;
+    track.textContent = "";
+    const total = feed.reduce((a, f) => a + f.n, 0);
+    this.feedTotal = total;
+    const tot = this.q("[data-feed-total]");
+    if (tot) tot.textContent = `${total} ${this.lang ? "new photos" : "novih slika"}`;
+    for (let pass = 0; pass < 2; pass++) {
+      feed.forEach((f, i) => {
+        const row = document.createElement("button");
+        row.type = "button";
+        row.setAttribute("data-feed-row", String(i));
+        row.style.cssText = "display:flex;align-items:center;gap:16px;width:100%;min-height:92px;padding:14px 32px;border:0;border-bottom:1px solid rgba(18,17,15,.1);background:transparent;text-align:left;cursor:pointer;transition:background .2s ease;";
+        const tone = i % 3 === 0 ? "#ded8cb" : (i % 3 === 1 ? "#d5cfc1" : "#e3ddd1");
+        row.innerHTML = `<span style="flex:0 0 auto;width:78px;height:60px;background-color:${tone};background-image:repeating-linear-gradient(112deg,rgba(18,17,15,.08) 0 2px,rgba(18,17,15,0) 2px 12px)"></span>`
+          + `<span style="display:grid;gap:5px;min-width:0;flex:1"><span style="font-size:15.5px;font-weight:500">${f.name}</span>`
+          + `<span data-feed-meta="${i}" style="font-family:ui-monospace,monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(18,17,15,.55)">${f.n} ${this.lang ? "photos" : "slika"} · ${f.ago[this.lang]}</span></span>`
+          + `<span style="flex:0 0 auto;font-size:18px;color:rgba(18,17,15,.35)">→</span>`;
+        row.addEventListener("mouseenter", () => { row.style.background = "rgba(18,17,15,.05)"; });
+        row.addEventListener("mouseleave", () => { row.style.background = "transparent"; });
+        row.addEventListener("click", () => this.openGallery(f.run, f.date, true));
+        track.appendChild(row);
+      });
+    }
+  }
+
+  openGallery(run, date, locked) {
+    this.count = run.n;
+    if (typeof locked === "boolean") this.locked = locked;
+    const name = this.q("[data-gal-name]");
+    const meta = this.q("[data-gal-meta]");
+    const buyMeta = this.q("[data-buy-meta]");
+    const word = this.lang ? "photos" : "slika";
+    if (name) name.textContent = run.name;
+    if (meta) meta.textContent = `${date} · ${run.n} ${word}`;
+    if (buyMeta) buyMeta.textContent = `${run.name} · ${run.n} ${word}`;
+    this.show("gallery");
+    this.renderGallery();
+    requestAnimationFrame(() => this.renderWindow());
+    this.markNav(this.locked ? "locked" : "unlocked");
+  }
+
+  setupGrid() {
+    this.grid = this.q("[data-grid]");
+    this.scrollEl = this.q("[data-grid-scroll]");
+    if (!this.grid || !this.scrollEl) return;
+    this.onScroll = () => this.renderWindow();
+    this.onResize = () => { if (this.current === "gallery") this.renderGallery(); };
+    this.scrollEl.addEventListener("scroll", this.onScroll, { passive: true });
+    window.addEventListener("resize", this.onResize);
+  }
+
+  renderGallery() {
+    const empty = this.q("[data-empty]");
+    const lockedBar = this.q("[data-bottom-locked]");
+    const unlockedBar = this.q("[data-bottom-unlocked]");
+    const note = this.q("[data-lock-note]");
+    if (lockedBar) lockedBar.style.display = this.locked && this.count ? "flex" : "none";
+    if (unlockedBar) unlockedBar.style.display = !this.locked && this.count ? "flex" : "none";
+    if (note) note.style.display = this.locked ? "flex" : "none";
+    if (empty) empty.style.display = this.count ? "none" : "block";
+    if (this.grid) this.grid.style.display = this.count ? "block" : "none";
+    if (!this.count) return;
+    this.tiles.forEach(el => el.remove());
+    this.tiles.clear();
+    this.loaded = {};
+    const gap = 8;
+    const width = this.grid.clientWidth || 1200;
+    this.cols = Math.max(3, Math.min(8, Math.floor(width / 220)));
+    this.cell = Math.floor((width - gap * (this.cols - 1)) / this.cols);
+    this.gap = gap;
+    this.rowH = Math.round(this.cell * 0.68) + gap;
+    this.tileH = Math.round(this.cell * 0.68);
+    this.rows = Math.ceil(this.count / this.cols);
+    this.grid.style.height = this.rows * this.rowH + "px";
+    this.scrollEl.scrollTop = 0;
+    this.renderWindow();
+  }
+
+  renderWindow() {
+    if (!this.grid || !this.count || !this.cell) return;
+    const top = this.scrollEl.scrollTop;
+    const h = this.scrollEl.clientHeight;
+    const first = Math.max(0, Math.floor(top / this.rowH) - 2);
+    const last = Math.min(this.rows - 1, Math.ceil((top + h) / this.rowH) + 2);
+    const need = new Set();
+    for (let r = first; r <= last; r++) {
+      for (let c = 0; c < this.cols; c++) {
+        const i = r * this.cols + c;
+        if (i >= this.count) break;
+        need.add(i);
+        if (!this.tiles.has(i)) this.grid.appendChild(this.makeTile(i, r, c));
+      }
+    }
+    this.tiles.forEach((el, i) => {
+      if (!need.has(i)) { el.remove(); this.tiles.delete(i); }
+    });
+  }
+
+  makeTile(i, r, c) {
+    const el = document.createElement("button");
+    el.type = "button";
+    el.style.cssText = `position:absolute;left:${c * (this.cell + this.gap)}px;top:${r * this.rowH}px;width:${this.cell}px;height:${this.tileH}px;padding:0;border:0;background:#e6e2d8;overflow:hidden;cursor:pointer;transition:transform .2s ease;`;
+    el.addEventListener("mouseenter", () => { el.style.transform = "scale(1.02)"; el.style.zIndex = "1"; });
+    el.addEventListener("mouseleave", () => { el.style.transform = ""; el.style.zIndex = ""; });
+    if (this.loaded[i] && !this.netDown) {
+      this.paintTile(el, i);
+    } else {
+      el.style.backgroundImage = "linear-gradient(100deg, #e6e2d8 20%, #efece4 40%, #e6e2d8 60%)";
+      el.style.backgroundSize = "300px 100%";
+      if (!this.netDown) {
+        el.style.animation = "gdShimmer 1.1s linear infinite";
+        const t = setTimeout(() => {
+          if (this.netDown) return;
+          this.loaded[i] = true;
+          if (this.tiles.get(i) === el) this.paintTile(el, i);
+        }, 180 + (i % 7) * 90);
+        this.timers.push(t);
+      }
+    }
+    el.addEventListener("click", () => this.openLightbox(i));
+    this.tiles.set(i, el);
+    return el;
+  }
+
+  paintTile(el, i) {
+    el.style.animation = "none";
+    el.style.backgroundSize = "auto";
+    el.style.backgroundColor = i % 3 === 0 ? "#e0dbcf" : (i % 3 === 1 ? "#d9d3c6" : "#e6e0d4");
+    el.style.backgroundImage = "repeating-linear-gradient(112deg, rgba(18,17,15,0.075) 0 2px, rgba(18,17,15,0) 2px 12px)";
+    el.textContent = "";
+    if (this.locked) {
+      const wm = document.createElement("span");
+      wm.style.cssText = "position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:rgba(18,17,15,.28);transform:rotate(-22deg);pointer-events:none;";
+      wm.textContent = "SM FOTO STUDIO";
+      el.style.position = "absolute";
+      el.appendChild(wm);
+    }
+  }
+
+  step(dir) {
+    this.lbIndex = Math.min(this.count - 1, Math.max(0, (this.lbIndex || 0) + dir));
+    this.paintLightbox();
+  }
+
+  openLightbox(i) {
+    this.lbIndex = i;
+    this.show("lightbox");
+    this.markNav("lightbox");
+    this.paintLightbox();
+  }
+
+  paintLightbox() {
+    const stage = this.q("[data-lb-stage]");
+    const counter = this.q("[data-lb-counter]");
+    const bottom = this.q("[data-lb-bottom]");
+    if (counter) counter.textContent = `${this.lbIndex + 1} / ${this.count}`;
+    if (bottom) bottom.style.display = this.locked ? "flex" : "none";
+    if (!stage) return;
+    stage.textContent = "";
+    const frame = document.createElement("div");
+    const tone = this.lbIndex % 3 === 0 ? "#c9c3b6" : (this.lbIndex % 3 === 1 ? "#bdb7aa" : "#d2ccbf");
+    frame.style.cssText = `height:100%;aspect-ratio:3/2;max-width:100%;background-color:${tone};background-image:repeating-linear-gradient(112deg,rgba(18,17,15,.09) 0 2px,rgba(18,17,15,0) 2px 16px);position:relative;animation:gdFade .2s ease both;`;
+    const label = document.createElement("span");
+    label.style.cssText = "position:absolute;left:14px;bottom:12px;font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(18,17,15,.55);";
+    label.textContent = `1200 px · IMG_${String(4100 + this.lbIndex)}`;
+    frame.appendChild(label);
+    if (this.locked) {
+      const wm = document.createElement("span");
+      wm.style.cssText = "position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:56px;letter-spacing:.14em;text-transform:uppercase;color:rgba(18,17,15,.26);transform:rotate(-22deg);";
+      wm.textContent = "SM FOTO STUDIO";
+      frame.appendChild(wm);
+    }
+    stage.appendChild(frame);
+  }
+
+  applyLang() {
+    this.qa("[data-i18n]").forEach(el => {
+      const val = this.t(el.getAttribute("data-i18n"));
+      if (!val) return;
+      if (val.indexOf("<br") >= 0) el.innerHTML = val; else el.textContent = val;
+    });
+    if (this.feed) {
+      const tot = this.q("[data-feed-total]");
+      if (tot) tot.textContent = `${this.feedTotal} ${this.lang ? "new photos" : "novih slika"}`;
+      this.qa("[data-feed-meta]").forEach(el => {
+        const f = this.feed[Number(el.getAttribute("data-feed-meta"))];
+        if (f) el.textContent = `${f.n} ${this.lang ? "photos" : "slika"} · ${f.ago[this.lang]}`;
+      });
+    }
+    this.qa("[data-lang] button").forEach(b => {
+      const on = (b.getAttribute("data-set-lang") === "en") === (this.lang === 1);
+      b.style.background = on ? "#12110f" : "transparent";
+      b.style.color = on ? "#f5f3ee" : "#12110f";
+    });
+  }
+
+  setError() {
+    const box = this.q("[data-code-error]");
+    const text = this.q("[data-code-error-text]");
+    const att = this.q("[data-attempts]");
+    if (!box) return;
+    box.style.display = "block";
+    this.attempts = Math.max(0, this.attempts - 1);
+    if (text) text.textContent = this.lang ? "Code not recognised. Check the card." : "Kod nije prepoznat. Provjerite karticu.";
+    if (att) att.textContent = this.attempts > 0
+      ? (this.lang ? `${this.attempts} attempts left` : `Još ${this.attempts} ${this.attempts === 1 ? "pokušaj" : "pokušaja"}`)
+      : (this.lang ? "No attempts left — call the studio" : "Nema više pokušaja — pozovite studio");
+  }
+  clearError() {
+    const box = this.q("[data-code-error]");
+    if (box) box.style.display = "none";
+  }
+
+  showBlocked(kind) {
+    const k = this.q("[data-blocked-kicker]");
+    const t = this.q("[data-blocked-title]");
+    const b = this.q("[data-blocked-body]");
+    const en = this.lang === 1;
+    if (kind === "empty") {
+      if (k) k.textContent = en ? "Nothing published" : "Termin bez slika";
+      if (t) t.textContent = en ? "No photos yet" : "Još nema fotografija";
+      if (b) b.textContent = en ? "This raft has no published photos yet. They usually go up the same evening." : "Za ovaj čamac još nema objavljenih fotografija. Obično stižu isto veče.";
+    } else {
+      if (k) k.textContent = en ? "Code expired" : "Kod istekao";
+      if (t) t.textContent = en ? "Gallery archived" : "Galerija je arhivirana";
+      if (b) b.textContent = en ? "Photos from this descent were available for 30 days and are now archived. Call us with the code from your card and we will restore them within a day." : "Fotografije sa ovog spusta su bile dostupne 30 dana i sada su u arhivi. Pozovite nas sa kodom sa kartice i vraćamo ih na dan.";
+    }
+    this.show("blocked");
+  }
+
+  startZip() {
+    const bar = this.q("[data-zip-bar]");
+    const status = this.q("[data-zip-status]");
+    const pct = this.q("[data-zip-pct]");
+    if (this.zipTimer) clearInterval(this.zipTimer);
+    let p = 8;
+    if (bar) bar.style.width = "8%";
+    this.zipTimer = setInterval(() => {
+      p = Math.min(100, p + 3);
+      if (bar) bar.style.width = p + "%";
+      if (pct) pct.textContent = p + "%";
+      if (status) status.textContent = `${Math.round(TOTAL * p / 100)} / ${TOTAL} ${this.lang ? "photos" : "slika"}`;
+      if (p >= 100) clearInterval(this.zipTimer);
+    }, 700);
+  }
+
+  renderVals() {
+    return {
+      onLang: (e) => {
+        this.lang = e.currentTarget.getAttribute("data-set-lang") === "en" ? 1 : 0;
+        this.applyLang();
+        if (this.current === "lightbox") this.paintLightbox();
+      },
+      onGoto: (e) => {
+        const key = e.currentTarget.getAttribute("data-goto");
+        const banner = this.q("[data-net-banner]");
+        this.markNav(key);
+        if (key === "code") { this.clearError(); this.attempts = 3; this.show("code"); const i = this.q("[data-code-input]"); if (i) { i.value = ""; i.focus(); } return; }
+        if (key === "qr") { this.show("code"); const i = this.q("[data-code-input]"); if (i) i.value = "K7XM4Q2P"; this.timers.push(setTimeout(() => this.openGallery(DAYS[0].runs[0], DAYS[0].d, true), 500)); return; }
+        if (key === "dates") { this.show("dates"); return; }
+        if (key === "locked") { this.netDown = false; if (banner) banner.style.display = "none"; this.openGallery(DAYS[0].runs[0], DAYS[0].d, true); this.markNav("locked"); return; }
+        if (key === "lightbox") { this.locked = true; this.netDown = false; if (banner) banner.style.display = "none"; this.openGallery(DAYS[0].runs[0], DAYS[0].d, true); this.openLightbox(46); this.markNav("lightbox"); return; }
+        if (key === "buy") { this.show("buy"); return; }
+        if (key === "unlocked") { this.netDown = false; if (banner) banner.style.display = "none"; this.openGallery(DAYS[0].runs[0], DAYS[0].d, false); this.markNav("unlocked"); return; }
+        if (key === "zip") { this.show("zip"); this.startZip(); return; }
+        if (key === "err-code") { this.show("code"); const i = this.q("[data-code-input]"); if (i) i.value = "K7XM4Q1"; this.setError(); return; }
+        if (key === "err-expired") { this.showBlocked("expired"); return; }
+        if (key === "err-empty") { this.openGallery(DAYS[1].runs[1], DAYS[1].d, true); this.markNav("err-empty"); return; }
+        if (key === "err-net") {
+          this.netDown = false;
+          this.openGallery(DAYS[0].runs[0], DAYS[0].d, true);
+          this.markNav("err-net");
+          this.timers.push(setTimeout(() => {
+            this.netDown = true;
+            this.loaded = {};
+            this.tiles.forEach(el => el.remove());
+            this.tiles.clear();
+            this.renderWindow();
+            if (banner) banner.style.display = "block";
+          }, 450));
+          return;
+        }
+      },
+      onCodeInput: (e) => {
+        const el = e.currentTarget;
+        el.value = el.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8);
+        if (el.value.length === 8) this.clearError();
+      },
+      onSubmitCode: () => {
+        const el = this.q("[data-code-input]");
+        const v = (el && el.value) || "";
+        if (v === "K7XM4Q2P") { this.clearError(); this.openGallery(DAYS[0].runs[0], DAYS[0].d, true); return; }
+        this.setError();
+      },
+      onRetry: () => {
+        this.netDown = false;
+        const b = this.q("[data-net-banner]");
+        if (b) b.style.display = "none";
+        this.tiles.forEach(el => el.remove());
+        this.tiles.clear();
+        this.renderWindow();
+      },
+      onLbPrev: () => this.step(-1),
+      onLbNext: () => this.step(1),
+      onLbClose: () => { this.show("gallery"); this.markNav(this.locked ? "locked" : "unlocked"); },
+      onSheetClose: () => { this.show("gallery"); this.markNav(this.locked ? "locked" : "unlocked"); },
+      onPay: (e) => {
+        const btn = e.currentTarget;
+        this.qa("[data-pay] [data-pay-opt]").forEach(b => {
+          const on = b === btn;
+          b.style.background = on ? "#12110f" : "transparent";
+          b.style.color = on ? "#f5f3ee" : "#12110f";
+          b.style.borderColor = on ? "#12110f" : "rgba(18,17,15,0.3)";
+        });
+      },
+      onUnlock: () => { this.openGallery(DAYS[0].runs[0], DAYS[0].d, false); this.markNav("unlocked"); },
+      onZip: () => { this.show("zip"); this.markNav("zip"); this.startZip(); },
+      onZipSave: () => {
+        const input = this.q("[data-zip-mail]");
+        const note = this.q("[data-zip-note]");
+        if (!note) return;
+        const v = ((input && input.value) || "").trim();
+        note.style.display = "block";
+        if (!v || v.indexOf("@") < 0) {
+          note.style.color = "#8f1f24";
+          note.textContent = this.lang ? "Enter a valid email address." : "Unesite ispravnu mejl adresu.";
+          return;
+        }
+        note.style.color = "#12110f";
+        note.textContent = this.lang ? `Link will be sent to ${v}.` : `Link šaljemo na ${v}.`;
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

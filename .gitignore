@@ -1,0 +1,15 @@
+node_modules
+.next
+out
+*.db
+*.db-journal
+.env.local
+next-env.d.ts
+tsconfig.tsbuildinfo
+__pycache__
+
+# Tajne: HMAC kljuc, token secret, admin token. Vidi .env.example.
+.env
+
+# Privatni store: originali i peceni derivati. Nikad javna putanja.
+storage

@@ -191,7 +191,8 @@ async function main() {
           };
         });
 
-        // SQLite ne voli jedan ogroman INSERT — 500 po komadu.
+        // 500 po komadu — jedan ogroman INSERT preko pooled konekcije lako
+        // udari u limit paketa, a i drzi memoriju ravnom na 200k redova.
         for (let i = 0; i < rows.length; i += 500) {
           await db.photo.createMany({ data: rows.slice(i, i + 500) });
         }

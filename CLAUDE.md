@@ -60,8 +60,13 @@ Blokiranje desnog klika.
 
 - Framework: Next.js 15, App Router. API rute iz specifikacije mapiraju se
   1:1 na fajl-rutere.
-- Baza: Prisma. SQLite lokalno; prelaz na Postgres je promjena `provider` i
-  `DATABASE_URL`, schema ostaje ista.
-- Hosting: [još nije odlučeno]
+- Baza: Prisma nad Postgresom (Neon ili Supabase), i lokalno i u produkciji.
+  Prisma nosi jedan `provider` po schemi, pa SQLite lokalno više nije opcija.
+  Na serverless hostu ide POOLED connection string.
+- Hosting: Vercel. Fajl sistem je read-only i efemeran — ništa se ne smije
+  oslanjati na upis na disk.
+- Slike: `storage/` još ne postoji u deploymentu. Derivati fale, pa
+  `readDerivative` vraća `null` i crta se mock. Pravi store (S3/R2) je
+  sljedeći prolaz.
 
 Vidi README.md za pokretanje i za spisak onoga što je u prvom prolazu mock.

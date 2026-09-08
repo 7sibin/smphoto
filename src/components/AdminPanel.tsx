@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SiteNav } from "@/components/SiteNav";
 import { formatDate, formatPrice } from "@/lib/i18n";
 
@@ -35,49 +35,59 @@ export function AdminPanel() {
   const [rows, setRows] = useState<Row[] | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [pending, setPending] = useState<string | null>(null);
-  const [authed, setAuthed] = useState(false);
 
-  useEffect(() => {
-    try {
-      const savedToken = window.sessionStorage.getItem(TOKEN_KEY) ?? "";
-      const savedOp = window.localStorage.getItem(OP_KEY) ?? "";
-      if (savedToken) setToken(savedToken);
-      if (savedOp) setOperatorId(savedOp);
-    } catch {
-      /* private mode */
-    }
-  }, []);
+  /**
+   * Redni broj zahtjeva. Odgovor koji stigne poslije novijeg se odbacuje —
+   * inace zakasnjeli 401 pregazi listu koju je noviji zahtjev vec ucitao.
+   */
+  const reqId = useRef(0);
 
   const load = useCallback(async (tok: string) => {
+    const moj = ++reqId.current;
+    const zastario = () => moj !== reqId.current;
+
     setErr(null);
     try {
       const res = await fetch("/api/admin/sessions", {
         headers: { Authorization: `Bearer ${tok}` },
         cache: "no-store",
       });
+      if (zastario()) return;
       if (res.status === 401) {
         setErr("Pogrešan admin token.");
-        setAuthed(false);
         return;
       }
       if (!res.ok) throw new Error("load");
       const data = (await res.json()) as { sessions: Row[] };
+      if (zastario()) return;
       setRows(data.sessions);
-      setAuthed(true);
       try {
         window.sessionStorage.setItem(TOKEN_KEY, tok);
       } catch {
         /* private mode */
       }
     } catch {
+      if (zastario()) return;
       setErr("Nema veze sa serverom.");
     }
   }, []);
 
   useEffect(() => {
-    if (token && !authed && rows === null) void load(token);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
+    let savedToken = "";
+    try {
+      savedToken = window.sessionStorage.getItem(TOKEN_KEY) ?? "";
+      const savedOp = window.localStorage.getItem(OP_KEY) ?? "";
+      if (savedToken) setToken(savedToken);
+      if (savedOp) setOperatorId(savedOp);
+    } catch {
+      /* private mode */
+    }
+
+    // Samo za token vracen iz storage-a. Kucanje NE smije da okida ucitavanje:
+    // token ima 64 znaka, pa je to 64 zahtjeva u bazu, svaki 401 jer je prefiks.
+    // Operater pokrece ucitavanje dugmetom.
+    if (savedToken) void load(savedToken);
+  }, [load]);
 
   async function unlock(row: Row) {
     if (!operatorId.trim()) {

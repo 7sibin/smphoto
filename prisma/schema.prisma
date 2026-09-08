@@ -4,7 +4,14 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+
+  /// Aplikacija ide kroz pooler (Supabase, port 6543, transaction mode).
+  /// Serverless funkcije inace potrose konekcije.
+  url = env("DATABASE_URL")
+
+  /// Migracije i `db push` idu direktno. DDL kroz pgbouncer u transaction
+  /// modu ne prolazi, pa Prisma za schema operacije koristi ovu vezu.
+  directUrl = env("DIRECT_URL")
 }
 
 model Event {

@@ -10,6 +10,7 @@
     "demo": "npm run seed && npm run bake",
     "postinstall": "prisma generate",
     "smoke": "python scripts/smoke.py",
+    "e2e": "tsx scripts/e2e.mts",
     "bake": "tsx scripts/bake.ts"
   },
   "dependencies": {

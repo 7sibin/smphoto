@@ -7,9 +7,18 @@ ingestu i sluze se sa diska, kao sto bi ih sluzio CDN.
 
 ```bash
 npm install
-npm run demo     # seed + bake: 12 sesija, 2962 slike, 4 prave u Camcu 3
+cp .env.example .env   # pa upiši svoj Postgres URL i tri tajne
+npm run demo           # seed + bake: 12 sesija, 2962 slike, 4 prave u Camcu 3
 npm run dev
 ```
+
+Baza je Postgres (Supabase/Neon), i lokalno i u produkciji — Prisma nosi jedan
+`provider` po schemi. `DATABASE_URL` je **pooled** string, `DIRECT_URL` ide
+direktno i koristi ga samo `prisma db push`; DDL kroz pooler ne prolazi.
+
+> Ako `.env` naizgled nema efekta: dotenv **ne pregazi** varijablu koja već
+> postoji u okruženju. Zaostali `DATABASE_URL` u shell-u tiho pobjeđuje i
+> Prisma javlja „URL must start with `postgresql://`". Novi terminal to riješi.
 
 `npm run demo` je `npm run seed && npm run bake`. Idu zajedno: seed pravi nove
 UUID-eve slika, a bake pece derivate bas za te ID-eve. Sam seed ostavlja
@@ -131,21 +140,41 @@ Zamijenjeno pečenjem iznad.
 ## Provjera
 
 ```bash
+npm run e2e      # 22 provjere, read-only — smije i na produkciju
 npm run smoke    # 46 provjera protiv pokrenutog dev servera
 npx tsc --noEmit
 npm run build
 ```
 
-`npm run smoke` traži svjež seed (dio testova otključava sesije), a poslije
-sebe ostavlja otključane galerije. Redoslijed je uvijek **smoke, pa
-`npm run demo`** — ne obrnuto.
-Svaki run koristi svoju laznu IP u `X-Forwarded-For`, pa rate limit ne curi
-iz jednog run-a u drugi.
+**`npm run e2e`** ne mijenja stanje: nijedna provjera ne otključava sesiju.
+Zato smije da se pusti na deployovan sajt, bez argumenta ide na localhost:
+
+```bash
+npm run e2e
+npm run e2e -- https://smphoto-nu.vercel.app
+```
+
+Gleda sistem izvana, preko HTTP-a — ne uvozi Prismu ni `src/`. Težište je na
+nivou pristupa: da `wm` token dobije 401 na `clean` ruti, i da `clean` token na
+istoj ruti dobije bajtove. Kodove uzima iz seed-a; ako se seed promijeni,
+proslijedi `E2E_LOCKED_CODE` / `E2E_UNLOCKED_CODE`.
+
+**`npm run smoke`** je širi ali mijenja stanje — traži svjež seed (dio testova
+otključava sesije), a poslije sebe ostavlja otključane galerije. Redoslijed je
+uvijek **smoke, pa `npm run demo`** — ne obrnuto. Ne puštaj ga na produkciju.
+
+Oba koriste svoju laznu IP u `X-Forwarded-For`, pa rate limit ne curi iz jednog
+run-a u drugi. Iza Vercel edge-a tu IP postavlja platforma, pa `e2e` na
+produkciji potroši 1 od 10 dozvoljenih promašaja po pravoj IP.
 
 ## Stack
 
-Next.js 15 (App Router) · Prisma + SQLite · bez runtime zavisnosti van toga.
-Prelaz na Postgres je promjena `provider` i `DATABASE_URL` — schema ostaje.
+Next.js 15 (App Router) · Prisma + Postgres · bez runtime zavisnosti van toga.
+
+Deploy je na Vercelu, baza na Supabase. Fajl sistem funkcija je read-only i
+efemeran, pa ništa ne smije da se oslanja na upis na disk — `storage/` tamo ne
+postoji, `readDerivative` vraća `null` i slike se crtaju kao mock. Pravi store
+(S3/R2, dvije zone) je sljedeći prolaz.
 
 ## Kako je riješeno nepregovaračko
 
@@ -225,6 +254,7 @@ src/lib/mediaGuard.ts       jedina kapija do bajtova slike
 src/lib/mockImage.ts        SVG derivati za mock slike, žig u bajtovima
 src/lib/derivatives.ts      čitanje pečenih derivata sa diska
 scripts/bake.ts             ingest: prave fotografije, žig rasterizovan
+scripts/e2e.mts             22 read-only provjere preko HTTP-a, i na produkciji
 src/lib/ratelimit.ts        10 / 15 min po IP
 src/lib/client.ts           fetch sloj + grant u sessionStorage
 

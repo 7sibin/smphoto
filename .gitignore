@@ -13,3 +13,8 @@ __pycache__
 
 # Privatni store: originali i peceni derivati. Nikad javna putanja.
 storage
+
+# Dodao Vercel CLI pri `vercel link`. Njegov `.env*` je suzen na .env.local —
+# `.env` je vec gore, a .env.example se namjerno komituje.
+.vercel
+.env.local
